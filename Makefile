@@ -1,7 +1,7 @@
-include env_make
+include make_env
+
 NS = sinocalliopteryx
 VERSION ?= latest
-
 REPO = vigilant-carnival
 NAME = vigilant-carnival
 INSTANCE = raspi-node
@@ -9,7 +9,7 @@ INSTANCE = raspi-node
 .PHONY: build push shell run start stop rm release
 
 build:
-	docker build -t $(NS)/$(REPO):$(VERSION) .
+	docker build --no-cache=true -t $(NS)/$(REPO):$(VERSION) .
 
 push:
 	docker push $(NS)/$(REPO):$(VERSION)

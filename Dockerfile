@@ -1,7 +1,10 @@
 FROM hypriot/rpi-node:6.9.4
 
-# Open Port 80
-EXPOSE 80
+RUN apt-get update
+RUN mkdir /src
+COPY src/package.json /src/package.json
+WORKDIR /src
+RUN npm install
 
-# Run Node.js
-CMD ["node", "app.js"]
+EXPOSE 3000
+CMD ["npm", "run", "start:app"]

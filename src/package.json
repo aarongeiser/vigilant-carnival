@@ -2,11 +2,17 @@
   "name": "vigilant-carnival",
   "private": true,
   "version": "0.0.1",
-  "description": "Node.js App for Control Panel",
+  "description": "Node.js App for Raspberry Pi Control Panel",
   "author": "Aaron Geiser",
+  "scripts": {
+    "start:app": "./node_modules/nodemon/bin/nodemon.js --legacy-watch app.js"
+  },
   "dependencies": {
     "express": "4.14.0",
-    "websocket": "1.0.24",
+    "socket.io": "1.7.2",
     "rpi-gpio": "0.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "1.11.0"
   }
 }

@@ -1,6 +1,0 @@
-PORTS = -p 2900:80
-
-VOLUMES = -v src:/src
-
-ENV = \
-  -e APP_NAME=VIGILANT_CARNIVAL

@@ -1,0 +1,4 @@
+PORTS = -p 3000:3000
+VOLUMES = -v /Users/aaron.geiser/Sites/vigilant-carnival/src:/src
+ENV = \
+  -e NODE_ENV=development
