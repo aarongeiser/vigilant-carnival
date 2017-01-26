@@ -9,9 +9,10 @@ const io = require('socket.io')(server);
 gpio.setup(14, gpio.DIR_IN, readInput);
 
 function readInput() {
-    gpio.read(14, function(err, value) {
-        console.log('The value is ' + value);
+    gpio.on('change', function(channel, value) {
+        console.log('Channel ' + channel + ' value is now ' + value);
     });
+    gpio.setup(8, gpio.DIR_IN, gpio.EDGE_BOTH);
 }
 
 app.use('/', (req, res) => {
