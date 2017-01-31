@@ -37,6 +37,6 @@ jspm_packages
 .node_repl_history
 
 .idea
-/make_env
+make_env
 
 *.tags*
