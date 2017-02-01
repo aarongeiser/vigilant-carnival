@@ -1,0 +1,57 @@
+html {
+  box-sizing: border-box;
+  font-size: 62.5%;
+  color: #fff;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  background: #000;
+  font-size: 1.4rem;
+  font-family: 'PT Sans', sans-serif;
+  line-height: 2rem;
+  letter-spacing: -18px;
+}
+
+h1 {
+  text-transform: uppercase;
+  color: #fff;
+  font-size: 10rem;
+  position: absolute;
+  left: -11px;
+  letter-spacing: -19px;
+  width: 1000%;
+  margin: 0;
+  top: 28px;
+}
+
+.viz-list {
+  margin: 110px 0;
+  padding: 0;
+}
+
+.viz-list li {
+  list-style: none;
+  position: relative;
+  height: 180px;
+  left: -11px;
+}
+
+.viz-list li a {
+  font-weight: bold;
+  text-decoration: none;
+  text-transform: uppercase;
+  color: #24ffe8;
+  font-size: 18rem;
+  line-height: 18rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2000%;
+}

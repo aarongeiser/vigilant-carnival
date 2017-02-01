@@ -1,0 +1,30 @@
+{
+  "name": "distributor",
+  "version": "1.0.0",
+  "description": "serves client to collect audio data and distribute it to listening clients",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "prod": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aarongeiser/vigilant-carnival.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aarongeiser/vigilant-carnival/issues"
+  },
+  "homepage": "https://github.com/aarongeiser/vigilant-carnival#readme",
+  "dependencies": {
+    "ejs": "^2.5.5",
+    "express": "^4.14.1",
+    "serve-static": "^1.11.2",
+    "socket.io": "^1.7.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}
