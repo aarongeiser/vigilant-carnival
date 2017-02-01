@@ -10,7 +10,8 @@
   "dependencies": {
     "express": "4.14.0",
     "socket.io": "1.7.2",
-    "rpi-gpio": "0.7.0"
+    "rpi-gpio": "0.7.0",
+    "mcp-spi-adc": "0.4.0"
   },
   "devDependencies": {
     "nodemon": "1.11.0"
