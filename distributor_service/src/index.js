@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 const serveStatic = require('serve-static');
 
-const PORT = 3000;
+const PORT = 3001;
 const VISUALIZERS = 'visualizers';
 
 const server = http.createServer(app);
