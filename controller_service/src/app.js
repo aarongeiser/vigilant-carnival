@@ -1,9 +1,35 @@
-const gpio = require('rpi-gpio');
+// Web Sockets Setup
+var socket = require('socket.io-client')('192.168.0.180');
+socket.emit('input1', false);
+socket.emit('input2', false);
 
-console.log('Running...');
+// GPIO Setup
+var rpio = require('rpio');
+rpio.init({gpiomem: false}); /* Use /dev/mem */
+rpio.open(7, rpio.INPUT);
+rpio.open(8, rpio.INPUT);
 
-gpio.on('change', function(channel, value) {
-    console.log('Channel ' + channel + ' value is now ' + value);
+// Poll pin
+rpio.poll(7, function emitState(pin) {
+  var state = rpio.read(pin) ? 'released' : 'pressed';
+  console.log('Button event on P%d (button currently %s)', pin, state);
+  if (state) {
+    socket.emit('input1', false);
+  } else {
+    socket.emit('input1', true);
+  }
 });
 
-gpio.setup(7, gpio.DIR_IN, gpio.EDGE_BOTH);
+// Poll pin
+rpio.poll(8, function emitState(pin) {
+  var state = rpio.read(pin) ? 'released' : 'pressed';
+  console.log('Button event on P%d (button currently %s)', pin, state);
+  if (state) {
+    socket.emit('input2', false);
+  } else {
+    socket.emit('input2', true);
+  }
+});
+
+// Initial console log
+console.log('Running...');

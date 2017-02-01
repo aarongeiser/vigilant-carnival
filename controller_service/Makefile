@@ -15,13 +15,13 @@ push:
 	docker push $(NS)/$(REPO):$(VERSION)
 
 shell:
-	docker run --rm --name $(NAME)-$(INSTANCE) -i -t $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION) /bin/bash
+	docker run --cap-add SYS_RAWIO --device /dev/mem --privileged --rm --name $(NAME)-$(INSTANCE) -i -t $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION) /bin/bash
 
 run:
-	docker run --rm --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION)
+	docker run --cap-add SYS_RAWIO --device /dev/mem --privileged --rm --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION)
 
 start:
-	docker run -d --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION)
+	docker run --cap-add SYS_RAWIO --device /dev/mem --privileged -d --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION)
 
 stop:
 	docker stop $(NAME)-$(INSTANCE)
