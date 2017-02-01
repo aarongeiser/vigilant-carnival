@@ -1,5 +1,5 @@
 
-window.getAudio((audio) => {
+window.onload = () => {
   if (audio.permission) {
     const canvas = document.getElementById('audioCanvas');
     const ctx = canvas.getContext('2d');
@@ -29,4 +29,4 @@ window.getAudio((audio) => {
 
     draw();
   }
-});
+};

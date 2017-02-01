@@ -1,5 +1,4 @@
-window.getAudio(audio => {
-  if (!audio.permission) { return; }
+window.onload = () => {
 
   var camera, scene, renderer, composer;
   var object, light;
@@ -98,4 +97,4 @@ window.getAudio(audio => {
 
   }
 
-});
+};

@@ -24,7 +24,7 @@ window.onload = () => {
       let v = (d ? d : 128) / 128.0;
       let y = v * height / 2;
 
-      ctx.fillRect(x, d, sliceWidth, -y);
+      ctx.fillRect(x, d, sliceWidth, y);
 
       x += sliceWidth + 1;
     }
@@ -34,7 +34,8 @@ window.onload = () => {
   socket.on('connect', () => {
     socket.on('audio', draw);
     socket.on('down', draw);
-    draw();
   });
+
+  draw();
 
 };
