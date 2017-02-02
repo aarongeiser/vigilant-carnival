@@ -1,11 +1,5 @@
 include make_env
 
-NS = sinocalliopteryx
-VERSION ?= latest
-REPO = vigilant-carnival
-NAME = vigilant-carnival
-INSTANCE = raspi-node
-
 .PHONY: build push shell run start stop rm release
 
 build:
