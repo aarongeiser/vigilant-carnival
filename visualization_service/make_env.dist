@@ -1,0 +1,4 @@
+PORTS = -p 3002:3002
+VOLUMES = -v /local/path:/src
+ENV = \
+  -e NODE_ENV=development
