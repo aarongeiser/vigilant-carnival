@@ -1,6 +1,6 @@
 window.onload = () => {
 
-  let masterLineWidith = 10;
+  let gap = 10;
   const canvas = document.getElementById('audioCanvas');
   const ctx = canvas.getContext('2d');
   const height = canvas.height = window.innerHeight;
@@ -15,7 +15,7 @@ window.onload = () => {
     ctx.fillStyle = 'rgb(0, 0, 0)';
     ctx.fillRect(0, 0, width, height);
 
-    ctx.lineWidth = masterLineWidith;
+    ctx.lineWidth = gap;
     ctx.fillStyle = 'rgb(36, 255, 232)';
 
 
@@ -26,14 +26,18 @@ window.onload = () => {
 
       ctx.fillRect(x, d, sliceWidth, y);
 
-      x += sliceWidth + 1;
+      x += sliceWidth + gap;
     }
   };
 
-  socket = io(window.location.origin);
+  socket = io('http://localhost:3001/viz');
   socket.on('connect', () => {
     socket.on('audio', draw);
     socket.on('down', draw);
+  });
+  socket.on('input-a-3', data => {
+    gap = data.value * 100;
+    console.log(data.value, gap);
   });
 
   draw();

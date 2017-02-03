@@ -17,7 +17,14 @@ app.use('/', (req, res) => res.render('index'));
 const viz = io.of('/viz');
 viz.on('connection', client => {
   client.emit('event', { message: 'connected to audio distributor' });
-  client.join(VISUALIZERS);
+});
+
+const inputs = io.of('/input');
+inputs.on('connection', client => {
+  console.log("I have an input...");
+  client.on('input-a-3', data => {
+    viz.emit('input-a-3', data);
+  });
 });
 
 const dist = io.of('/distributor');
@@ -29,15 +36,13 @@ dist.on('connection', function (d) {
     d.disconnect();
   } else {
     this.current_connections++;
+
     d.on('audio', data => {
-      let containsRooms = Object.keys(io.nsps['/viz'].adapter.rooms).length;
-      if (containsRooms) {
-        io.to(VISUALIZERS).emit('audio', data);
-        dist.emit('update_count', { connectionCount });
-      }
+      viz.emit('audio', data);
     });
+
     d.on('disconnect', d => {
-      io.to(VISUALIZERS).emit('down');
+      viz.emit('down');
       this.current_connections--;
     });
   }
