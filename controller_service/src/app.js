@@ -3,7 +3,7 @@ var mcpadc = require('mcp-spi-adc');
 var buffer = 0.00;
 
 // Web Sockets Setup
-var socket = require('socket.io-client')('http://10.119.82.39:3001/input');  /* http:// required */
+var socket = require('socket.io-client')('http://10.119.82.91:3001/input');  /* http:// required */
 socket.on("event", function(data) { console.log(data); })
 socket.emit('input-a-1', false);
 socket.emit('input-a-2', false);
