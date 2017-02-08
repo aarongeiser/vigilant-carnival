@@ -4,6 +4,6 @@ REPO = visualization-service
 NAME = visualization-service
 INSTANCE = visualization-service
 PORTS = -p 3002:3002
-VOLUMES = -v $(shell pwd)/src:/src:/src
+VOLUMES = -v $(shell pwd)/src:/src
 ENV = \
   -e NODE_ENV=development

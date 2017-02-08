@@ -4,6 +4,6 @@ REPO = distributor-service
 NAME = distributor-service
 INSTANCE = distributor-service
 PORTS = -p 3001:3001
-VOLUMES = -v $(shell pwd)/src:/src:/src
+VOLUMES = -v $(shell pwd)/src:/src
 ENV = \
   -e NODE_ENV=development

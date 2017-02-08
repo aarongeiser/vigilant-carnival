@@ -4,6 +4,6 @@ REPO = controller-service
 NAME = controller-service
 INSTANCE = controller-service
 PORTS = -p 3000:3000
-VOLUMES = -v $(shell pwd)/src:/src:/src
+VOLUMES = -v $(shell pwd)/src:/src
 ENV = \
   -e NODE_ENV=development
