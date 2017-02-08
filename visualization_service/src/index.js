@@ -25,5 +25,5 @@ app.use('/viz', (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Distributor up and running on port: ${PORT}`);
+  console.log(`Visualization Service up and running on port: ${PORT}`);
 });
