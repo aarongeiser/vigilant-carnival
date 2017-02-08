@@ -1,37 +1,27 @@
 include make_env
 
-NS = sinocalliopteryx
-VERSION ?= latest
-REPO = vigilant-carnival
-NAME = visualizer
-INSTANCE = node
-
-INSTANCE_NAME = $(NAME)-$(INSTANCE)
-PARAMS = $(PORTS) $(VOLUMES) $(ENV)
-TAG = $(NAME)/$(REPO):$(VERSION)
-
 .PHONY: build push shell run start stop rm release
 
 build:
-	docker build --no-cache=true -t $(TAG) .
+	docker build --no-cache=true -t $(NS)/$(REPO):$(VERSION) .
 
 push:
-	docker push $(TAG)
+	docker push $(NS)/$(REPO):$(VERSION)
 
 shell:
-	docker run --rm --name $(INSTANCE_NAME) -i -t $(PARAMS) $(TAG) /bin/bash
+	docker run --rm --name $(NAME)-$(INSTANCE) -i -t $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION) /bin/bash
 
 run:
-	docker run --rm --name $(INSTANCE_NAME) $(PARAMS) $(TAG)
+	docker run --rm --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION)
 
 start:
-	docker run -d --name $(INSTANCE_NAME) $(PARAMS) $(TAG)
+	docker run -d --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION)
 
 stop:
-	docker stop $(INSTANCE_NAME)
+	docker stop $(NAME)-$(INSTANCE)
 
 rm:
-	docker rm $(INSTANCE_NAME)
+	docker rm $(NAME)-$(INSTANCE)
 
 release: build
 	make push -e VERSION=$(VERSION)
