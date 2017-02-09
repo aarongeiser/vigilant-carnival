@@ -1,47 +1,53 @@
 // MCP ADC Setup
 var mcpadc = require('mcp-spi-adc');
-var buffer = 0.00;
 
 // Web Sockets Setup
-var socket = require('socket.io-client')('http://10.119.82.91:3001/input');  /* http:// required */
-socket.on("event", function(data) { console.log(data); })
-socket.emit('input-a-1', false);
-socket.emit('input-a-2', false);
-socket.emit('input-a-3', buffer);
+var socket = require('socket.io-client')(process.env.SOCKET_ADDRESS);  /* http:// required */
+socket.on("event", function(data) { console.log(data); });
 
 // GPIO Setup
 var rpio = require('rpio');
 rpio.init({gpiomem: false}); /* Use /dev/mem */
-rpio.open(7, rpio.INPUT, rpio.PULL_UP);
-rpio.open(8, rpio.INPUT, rpio.PULL_UP);
 
 // Poll pin
-rpio.poll(7, function (pin) {
-  var state = rpio.read(pin) ? 'released' : 'pressed';
-  console.log('Button event on P%d (button currently %s)', pin, state);
-  socket.emit('input-a-1', {'value':rpio.read(pin)});
-});
-
-// Poll pin
-rpio.poll(8, function (pin) {
-  var state = rpio.read(pin) ? 'released' : 'pressed';
-  console.log('Button event on P%d (button currently %s)', pin, state);
-  socket.emit('input-a-2', {'value':rpio.read(pin)});
-});
-
-// Poll ADC Channel 0
-var pot = mcpadc.open(0, {speedHz: 1300000}, function (err) {
-  setInterval(function () {
-    pot.read(function (err, reading) {
-      var value = reading.value.toFixed(2);
-      if (value != buffer) {
-        console.log('Pot value: %d', value);
-        socket.emit('input-a-3', {'value':value});
-        buffer = value;
-      }
+function pollPin (gpioPin, inputName) {
+    rpio.open(gpioPin, rpio.INPUT, rpio.PULL_UP);
+    rpio.poll(gpioPin, function (pin) {
+        var state = rpio.read(pin) ? 'released' : 'pressed';
+        console.log('Button event on P%d (button currently %s)', pin, state);
+        socket.emit(inputName, {
+            'source' : process.env.CONTROLLER_NAME,
+            'value':rpio.read(pin)
+        });
     });
-  }, 30);
-});
+}
+
+function pollPot(adcChannel, inputName) {
+    var buffer = 0.00;
+    var pot = mcpadc.open(adcChannel, {speedHz: 1300000}, function (err) {
+        setInterval(function () {
+            pot.read(function (err, reading) {
+                var value = reading.value.toFixed(2);
+                if (value != buffer) {
+                    console.log('Pot value: %d', value);
+                    socket.emit(inputName, {
+                        'source' : process.env.CONTROLLER_NAME,
+                        'value' : value
+                    });
+                    buffer = value;
+                }
+            });
+        }, 30);
+    });
+}
+
+pollPin(7, process.env.CONTROLLER_NAME + "-button1");
+pollPin(8, process.env.CONTROLLER_NAME + "-button2");
+pollPin(10, process.env.CONTROLLER_NAME + "-up");
+pollPin(11, process.env.CONTROLLER_NAME + "-right");
+pollPin(12, process.env.CONTROLLER_NAME + "-down");
+pollPin(13, process.env.CONTROLLER_NAME + "-left");
+pollPot(0, process.env.CONTROLLER_NAME + "-pot");
 
 // Initial console log
 console.log('Running...');
