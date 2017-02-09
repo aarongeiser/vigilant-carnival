@@ -16,26 +16,21 @@ window.onload = () => {
     defaultData.array[k] = Math.random() * (0 - 500) + 500;
   })
 
-  console.log(defaultData);
-
   const draw = (data = defaultData) => {
     let x = 0, i = 0;
     let len = Object.keys(data.array).length;
-    // let sliceWidth = WIDTH * 1.0 / len;
-
     let incrememt = SLICE_WIDTH + GAP;
-
 
     ctx.fillStyle = 'rgb(0, 0, 0)';
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
     for (; x < WIDTH; i++) {
-      let bar_height = data.array[i];
+      let bar_height = data.array[i] * 2;
       let bar_y = (HEIGHT - bar_height) / 2;
 
       let opacity = bar_height / HEIGHT_OFFSET;
 
-      ctx.fillStyle = `rgba(36, 125, 232, ${opacity})`;
+      ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
       ctx.fillRect(x, bar_y, SLICE_WIDTH, bar_height);
 
       x += incrememt;
@@ -52,6 +47,12 @@ window.onload = () => {
     if (GAP > 100) { GAP = 100; }
     if (GAP < 1) { GAP = 1; }
   });
+  socket.on('input-b-3', data => {
+    SLICE_WIDTH = data.value * 100;
+    if (SLICE_WIDTH >= 100) { SLICE_WIDTH = 100; }
+    if (SLICE_WIDTH <= 1) { SLICE_WIDTH = 1; }
+  });
+
 
   draw();
 

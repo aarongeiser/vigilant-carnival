@@ -1,4 +1,4 @@
-FROM hypriot/rpi-node:6.9.4
+FROM node:6.9
 
 RUN apt-get update
 RUN mkdir /src
