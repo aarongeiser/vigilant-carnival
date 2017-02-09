@@ -29,65 +29,39 @@ rpio.open(12, rpio.INPUT, rpio.PULL_UP);  /* stick_down */
 rpio.open(13, rpio.INPUT, rpio.PULL_UP);  /* stick_left */
 
 // Poll pin
-rpio.poll(7, function (pin) {
-  var state = rpio.read(pin) ? 'released' : 'pressed';
-  console.log('Button event on P%d (button currently %s)', pin, state);
-  socket.emit(button1, {
-      'source' : process.env.CONTROLLER_NAME,
-      'value':rpio.read(pin)
-  });
-});
+function pollPin (gpioPin, inputName) {
+    rpio.poll(gpioPin, function (pin) {
+        var state = rpio.read(pin) ? 'released' : 'pressed';
+        console.log('Button event on P%d (button currently %s)', pin, state);
+        socket.emit(inputName, {
+            'source' : process.env.CONTROLLER_NAME,
+            'value':rpio.read(pin)
+        });
+    });
+}
 
-// Poll pin
-rpio.poll(8, function (pin) {
-  var state = rpio.read(pin) ? 'released' : 'pressed';
-  console.log('Button event on P%d (button currently %s)', pin, state);
-  socket.emit(button2, {
-    'source' : process.env.CONTROLLER_NAME,
-    'value':rpio.read(pin)
-  });
-});
+pollPin(7, button1);
+pollPin(8, button2);
+pollPin(10, up);
+pollPin(11, right);
+pollPin(12, down);
+pollPin(13, left);
 
 // Poll ADC Channel 0
-var readpot = mcpadc.open(0, {speedHz: 1300000}, function (err) {
-  setInterval(function () {
-    pot.read(function (err, reading) {
-      var value = reading.value.toFixed(2);
-      if (value != buffer) {
-        console.log('Pot value: %d', value);
-        socket.emit(pot, {
-          'source' : process.env.CONTROLLER_NAME,
-          'value' : value
+mcpadc.open(0, {speedHz: 1300000}, function (err) {
+    setInterval(function () {
+        pot.read(function (err, reading) {
+            var value = reading.value.toFixed(2);
+            if (value != buffer) {
+                console.log('Pot value: %d', value);
+                socket.emit(pot, {
+                    'source' : process.env.CONTROLLER_NAME,
+                    'value' : value
+                });
+                buffer = value;
+            }
         });
-        buffer = value;
-      }
-    });
-  }, 30);
-});
-
-// Poll pin
-rpio.poll(10, function (pin) {
-  var state = rpio.read(pin) ? 'released' : 'pressed';
-  console.log('Button event on P%d (button currently %s)', pin, state);
-  socket.emit(stick_up, {'value':rpio.read(pin)});
-});
-// Poll pin
-rpio.poll(11, function (pin) {
-  var state = rpio.read(pin) ? 'released' : 'pressed';
-  console.log('Button event on P%d (button currently %s)', pin, state);
-  socket.emit(stick_right, {'value':rpio.read(pin)});
-});
-// Poll pin
-rpio.poll(12, function (pin) {
-  var state = rpio.read(pin) ? 'released' : 'pressed';
-  console.log('Button event on P%d (button currently %s)', pin, state);
-  socket.emit(stick_down, {'value':rpio.read(pin)});
-});
-// Poll pin
-rpio.poll(13, function (pin) {
-  var state = rpio.read(pin) ? 'released' : 'pressed';
-  console.log('Button event on P%d (button currently %s)', pin, state);
-  socket.emit(stick_left, {'value':rpio.read(pin)});
+    }, 30);
 });
 
 // Initial console log
