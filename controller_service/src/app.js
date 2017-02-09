@@ -24,7 +24,7 @@ function pollPin (gpioPin, inputName) {
 
 function pollPot(adcChannel, inputName) {
     var buffer = 0.00;
-    mcpadc.open(adcChannel, {speedHz: 1300000}, function (err) {
+    var pot = mcpadc.open(adcChannel, {speedHz: 1300000}, function (err) {
         setInterval(function () {
             pot.read(function (err, reading) {
                 var value = reading.value.toFixed(2);
