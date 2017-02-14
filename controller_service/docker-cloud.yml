@@ -1,0 +1,4 @@
+web:
+  image: sinocalliopteryx/controller-service
+  ports:
+    - "3000:3000"
