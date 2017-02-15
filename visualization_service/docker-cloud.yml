@@ -1,0 +1,4 @@
+web:
+  image: sinocalliopteryx/visualization-service
+  ports:
+    - "3002:3002"
