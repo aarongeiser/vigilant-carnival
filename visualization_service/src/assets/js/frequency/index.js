@@ -25,12 +25,12 @@ window.onload = () => {
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
     for (; x < WIDTH; i++) {
-      let bar_height = data.array[i] * 2;
+      let bar_height = data.array[i] * 5;
       let bar_y = (HEIGHT - bar_height) / 2;
 
       let opacity = bar_height / HEIGHT_OFFSET;
 
-      ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+      ctx.fillStyle = `rgba(125, 255, 125, ${opacity})`;
       ctx.fillRect(x, bar_y, SLICE_WIDTH, bar_height);
 
       x += incrememt;
@@ -42,12 +42,14 @@ window.onload = () => {
     socket.on('audio', draw);
     socket.on('down', draw);
   });
-  socket.on('input-a-3', data => {
+  socket.on('input-a-pot', data => {
+    console.log(data);
     GAP = data.value * 100;
     if (GAP > 100) { GAP = 100; }
     if (GAP < 1) { GAP = 1; }
   });
-  socket.on('input-b-3', data => {
+  socket.on('input-b-pot', data => {
+    console.log(data);
     SLICE_WIDTH = data.value * 100;
     if (SLICE_WIDTH >= 100) { SLICE_WIDTH = 100; }
     if (SLICE_WIDTH <= 1) { SLICE_WIDTH = 1; }

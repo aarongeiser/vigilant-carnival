@@ -21,9 +21,9 @@ window.onload = () => {
     camera.position.z = 400;
     scene = new THREE.Scene();
 
-    mesh1 = getBoxMesh(150, 150, 150);
-    mesh2 = getBoxMesh(200, 300, 200);
-    mesh3 = getBoxMesh(150, 150, 150);
+    mesh1 = getBoxMesh(100, 150, 100);
+    mesh2 = getBoxMesh(200, 500, 200);
+    mesh3 = getBoxMesh(100, 150, 100);
 
     mesh1.position.set(-200, 0, 0);
     mesh3.position.set(200, 0, 0);
@@ -31,16 +31,16 @@ window.onload = () => {
     scene.add(mesh2);
     scene.add(mesh3);
 
-    var outlineMaterial = new THREE.MeshBasicMaterial( { color: 0x24ffe8, side: THREE.BackSide } );
+    var outlineMaterial = new THREE.MeshBasicMaterial( { color: 0xffF000, side: THREE.BackSide } );
     outline1 = new THREE.Mesh( new THREE.BoxBufferGeometry(150, 150, 150), outlineMaterial );
     outline2 = new THREE.Mesh( new THREE.BoxBufferGeometry(200, 300, 200), outlineMaterial );
     outline3 = new THREE.Mesh( new THREE.BoxBufferGeometry(150, 150, 150), outlineMaterial );
 
     outline1.position.set(-200, 0, 0);
-    outline1.scale.multiplyScalar(1.05);
-    outline2.scale.multiplyScalar(1.05);
+    outline1.scale.multiplyScalar(1.20);
+    outline2.scale.multiplyScalar(1.20);
     outline3.position.set(200, 0, 0);
-    outline3.scale.multiplyScalar(1.05);
+    outline3.scale.multiplyScalar(1.20);
 
     scene.add( outline1 );
     scene.add( outline2 );
@@ -48,7 +48,7 @@ window.onload = () => {
 
     scene.fog = new THREE.Fog( 0x000000, 1, 1000 );
 
-    scene.add( new THREE.AmbientLight( 0x000000 ) );
+    scene.add( new THREE.AmbientLight( 0xff0000 ) );
 
     renderer = new THREE.WebGLRenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -66,10 +66,10 @@ window.onload = () => {
     const renderPass = new THREE.RenderPass(scene, camera);
     const filmPass = new THREE.ShaderPass(THREE.FilmShader);
     const mirrorPass = new THREE.ShaderPass(THREE.MirrorShader);
-    // const kaleidoPass = new THREE.ShaderPass(THREE.KaleidoShader);
-    // const dotScreenPass = new THREE.ShaderPass(THREE.DotScreenShader);
+    const kaleidoPass = new THREE.ShaderPass(THREE.KaleidoShader);
+    const dotScreenPass = new THREE.ShaderPass(THREE.DotScreenShader);
 
-    mirrorPass.uniforms[ 'side' ].value = 0;
+    // mirrorPass.uniforms[ 'side' ].value = 0;
     filmPass.uniforms['tDiffuse'].value = 10;
     filmPass.uniforms['sCount'].value = 600;
     filmPass.uniforms['sIntensity'].value = 1.0;
@@ -79,9 +79,9 @@ window.onload = () => {
 
     composer.addPass(renderPass);
     // composer.addPass(dotScreenPass);
-    composer.addPass(mirrorPass);
-    composer.addPass(filmPass);
-    // composer.addPass(kaleidoPass);
+    // composer.addPass(mirrorPass);
+    // composer.addPass(filmPass);
+    composer.addPass(kaleidoPass);
 
 
 
@@ -107,20 +107,20 @@ window.onload = () => {
     mesh1.rotation.x += 0.005;
     mesh1.rotation.y += 0.01;
 
-    outline1.rotation.x += 0.005;
-    outline1.rotation.y += 0.01;
+    outline1.rotation.x -= 0.005;
+    outline1.rotation.y -= 0.01;
 
     mesh2.rotation.x -= 0.005;
     mesh2.rotation.y += 0.01;
 
-    outline2.rotation.x -= 0.005;
-    outline2.rotation.y += 0.01;
+    outline2.rotation.x += 0.005;
+    outline2.rotation.y -= 0.01;
 
     mesh3.rotation.x -= 0.005;
     mesh3.rotation.y -= 0.01;
 
-    outline3.rotation.x -= 0.005;
-    outline3.rotation.y -= 0.01;
+    outline3.rotation.x += 0.005;
+    outline3.rotation.y += 0.01;
 
     composer.render(0.1);
     // renderer.render(scene, camera);
