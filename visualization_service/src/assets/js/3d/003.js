@@ -1,18 +1,33 @@
+function mapToRange (inVal = 0.5, inMin = 0.0, inMax = 1.0, outMin = -45.0, outMax = 45.0) {
+  const within = (inVal => inMin && inVal <= inMax);
+  let val = inVal;
+  if (!within) return val;
+  if (outMin < 0) {
+    val = ((Math.abs(outMin) + Math.abs(outMax)) * (val / inMax)) + outMin;
+  } else {
+    val = (outMax - outMin) * (val / inMax);
+  }
+
+  console.log({ val });
+
+  return val;
+
+}
 
 function init() {
 
+  var camera, scene, ambientLight, light, light2, plane, renderer, W, H, defaultVertices;
+
   const config = {
     variance: {
-      x: 0.4,
-      y: 0.4,
-      z: 4,
+      x: 0.8,
+      y: 0.8,
+      z: 8,
     },
-    speed: 8,
-    planeSize: 60,
+    speed: 10,
+    planeSize: 80,
     planeDefinition: 14
   };
-
-  var camera, scene, ambientLight, light, light2, plane, renderer, W, H, defaultVertices;
 
   W = window.innerWidth;
   H = window.innerHeight;
@@ -27,21 +42,27 @@ function init() {
   }
 
   const createCamera = () => {
-    camera = new THREE.PerspectiveCamera(50, W / H, 1, 1000);
+    camera = new THREE.PerspectiveCamera(50, W / H, 0.1, 100);
     camera.setLens(25);
-    camera.position.set(0, 0, 40);
+    camera.position.set(0, 0, 50);
   }
 
   const createLights = () => {
-    ambientLight = new THREE.AmbientLight(0xfffffff);
-    scene.add(ambientLight);
+    // ambientLight = new THREE.AmbientLight(0xfffffff);
+    // scene.add(ambientLight);
 
-    light = new THREE.PointLight(0xff0000, 1, 0, 2);
-    light.position.set(1, 200, 100);
+    var hemiLight = new THREE.HemisphereLight( 0xffffff, 0x484848, 0.5);
+    hemiLight.castshadow = true;
+		scene.add( hemiLight );
+
+    light = new THREE.PointLight(0xff0000, 2, 100);
+    // light.position.set(0, 2, 0);
+    light.castshadow = true;
     scene.add(light);
 
-    light2 = new THREE.PointLight(0x0000ff, 1, 0, 2);
-    light2.position.set(100, 1, 500);
+    light2 = new THREE.PointLight(0x00ffff, 2, 100);
+    // light2.position.set(0, 2, 0);
+    light2.castshadow = true;
     scene.add(light2);
   }
 
@@ -126,7 +147,7 @@ function init() {
   resize();
   updatePlane();
 
-  renderer.setClearColor(0xeeeeee);
+  // renderer.setClearColor(0xeeeeee);
   renderer.render(scene, camera);
   document.body.appendChild(renderer.domElement);
   TweenLite.ticker.addEventListener('tick', render);
@@ -134,4 +155,24 @@ function init() {
 
 }
 
+
 init();
+
+socket = io('http://localhost:3001/viz');
+socket.on('connect', () => {
+  // socket.on('audio', draw);
+  // socket.on('down', draw);
+  console.log('connected');
+});
+socket.on('input-a-pot', data => {
+  // console.log(data);
+  // GAP = data.value * 100;
+  // if (GAP > 100) { GAP = 100; }
+  // if (GAP < 1) { GAP = 1; }
+});
+socket.on('input-b-pot', data => {
+  // console.log(data);
+  // SLICE_WIDTH = data.value * 100;
+  // if (SLICE_WIDTH >= 100) { SLICE_WIDTH = 100; }
+  // if (SLICE_WIDTH <= 1) { SLICE_WIDTH = 1; }
+});
