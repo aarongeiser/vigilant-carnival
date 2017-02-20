@@ -12,6 +12,10 @@ app.use(serveStatic(__dirname + '/'));
 
 app.param('id', getVisualization);
 
+app.use('/viz/play', (req, res) => {
+  res.render('main');
+});
+
 app.use('/viz/:id', (req, res) => {
   const { viz } = req;
   console.log(viz);
@@ -23,6 +27,8 @@ app.use('/viz', (req, res) => {
     res.render('index', { all_viz: req.all_viz });
   });
 });
+
+
 
 server.listen(PORT, () => {
   console.log(`Visualization Service up and running on port: ${PORT}`);

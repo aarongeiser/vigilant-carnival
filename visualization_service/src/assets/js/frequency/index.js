@@ -1,61 +1,66 @@
-window.onload = () => {
+(function($V) {
 
-  let GAP = 10; //range 1 - 100
-  let SLICE_WIDTH = 10; //range 10 - 50
+  var freq = {
 
-  const canvas = document.getElementById('audioCanvas');
-  const ctx = canvas.getContext('2d');
-  const HEIGHT = canvas.height = window.innerHeight;
-  const WIDTH = canvas.width = window.innerWidth;
-  const HEIGHT_OFFSET = HEIGHT / 2;
+    GAP: 10,
+    SLICE_WIDTH: 10,
+    defaultData: { frequency: new Uint8Array(256) },
 
-  const defaultData = { array: new Uint8Array(256) };
+    play: function (data) {
+      const canvas = document.getElementById('audioCanvas');
+      const ctx = canvas.getContext('2d');
+      const HEIGHT = canvas.height = window.innerHeight;
+      const WIDTH = canvas.width = window.innerWidth;
+      const HEIGHT_OFFSET = HEIGHT / 2;
 
+      const { defaultData, SLICE_WIDTH, GAP } = this;
 
-  Object.keys(defaultData.array).forEach(k => {
-    defaultData.array[k] = Math.random() * (0 - 500) + 500;
-  })
+      if (!data) {
+        return;
+      }
 
-  const draw = (data = defaultData) => {
-    let x = 0, i = 0;
-    let len = Object.keys(data.array).length;
-    let incrememt = SLICE_WIDTH + GAP;
+      let x = 0, i = 0;
+      let len = Object.keys(data.frequency).length;
+      let incrememt = SLICE_WIDTH + GAP;
 
-    ctx.fillStyle = 'rgb(0, 0, 0)';
-    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+      ctx.fillStyle = 'rgb(0, 0, 0)';
+      ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-    for (; x < WIDTH; i++) {
-      let bar_height = data.array[i] * 5;
-      let bar_y = (HEIGHT - bar_height) / 2;
+      for (; x < WIDTH; i++) {
+        let bar_height = data.frequency[i] * 5;
+        let bar_y = (HEIGHT - bar_height) / 2;
 
-      let opacity = bar_height / HEIGHT_OFFSET;
+        let opacity = bar_height / HEIGHT_OFFSET;
 
-      ctx.fillStyle = `rgba(125, 255, 125, ${opacity})`;
-      ctx.fillRect(x, bar_y, SLICE_WIDTH, bar_height);
+        ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+        ctx.fillRect(x, bar_y, SLICE_WIDTH, bar_height);
 
-      x += incrememt;
+        x += incrememt;
+      }
+    },
+
+    destroy: function () {
+      this.GAP = this.SLICE_WIDTH = 10;
+    },
+
+    receive: function (event, data) {
+      switch (event) {
+        case 'input-a-pot':
+          this.GAP = data.value * 100;
+          if (this.GAP > 100) { this.GAP = 100; }
+          if (this.GAP < 1) { this.GAP = 1; }
+          break;
+        case 'input-b-pot':
+          this.SLICE_WIDTH = data.value * 100;
+          if (this.SLICE_WIDTH >= 100) { this.SLICE_WIDTH = 100; }
+          if (this.SLICE_WIDTH <= 1) { this.SLICE_WIDTH = 1; }
+        default:
+          this.play(data);
+      }
     }
   };
 
-  socket = io('http://localhost:3001/viz');
-  socket.on('connect', () => {
-    socket.on('audio', draw);
-    socket.on('down', draw);
-  });
-  socket.on('input-a-pot', data => {
-    console.log(data);
-    GAP = data.value * 100;
-    if (GAP > 100) { GAP = 100; }
-    if (GAP < 1) { GAP = 1; }
-  });
-  socket.on('input-b-pot', data => {
-    console.log(data);
-    SLICE_WIDTH = data.value * 100;
-    if (SLICE_WIDTH >= 100) { SLICE_WIDTH = 100; }
-    if (SLICE_WIDTH <= 1) { SLICE_WIDTH = 1; }
-  });
+  $V.register(freq);
 
 
-  draw();
-
-};
+})(window.VIZ);

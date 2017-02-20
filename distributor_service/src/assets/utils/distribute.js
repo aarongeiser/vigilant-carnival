@@ -15,12 +15,18 @@ window.onload = () => {
         return;
       }
       setStatus("Permission Granted: Now streaming audio data to server");
+      function getAverageVolume(array) {
+        let values = array.reduce(function(a, b) {
+          return a += b;
+        });
+        return values / array.length;
+      }
       function distribute() {
         requestAnimationFrame(distribute);
         const bufferLength = audio.analyser.frequencyBinCount;
         const dataArray = new Uint8Array(bufferLength);
         audio.analyser.getByteFrequencyData(dataArray);
-        socket.emit('audio', { array: dataArray });
+        socket.emit('audio', { frequency: dataArray, volume: getAverageVolume(dataArray) });
       }
 
       distribute();
