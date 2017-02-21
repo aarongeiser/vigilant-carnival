@@ -153,7 +153,7 @@
       });
 
       plane.rotation.x -= 0.005;
-      plane.rotation.z += 0.005;
+      plane.rotation.z += 0.001;
 
       this.render();
     }
