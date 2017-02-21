@@ -59,11 +59,8 @@
         });
         console.log('connected');
       });
-      socket.on('input-a-pot', data => {
-        currentVizualization.receive('input-a-pot', data);
-      });
-      socket.on('input-b-pot', data => {
-        currentVizualization.receive('input-b-pot', data);
+      socket.on('input', data => {
+        currentVizualization.receive('input', data);
       });
     },
 

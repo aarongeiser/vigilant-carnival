@@ -23,11 +23,8 @@ const inputs = io.of('/input');
 inputs.on('connection', client => {
   console.log("I have an input...");
   client.emit('event', { message: "You are now connected!" })
-  client.on('input-a-pot', data => {
-    viz.emit('input-a-pot', data);
-  });
-  client.on('input-b-pot', data => {
-    viz.emit('input-b-pot', data);
+  client.on('input', data => {
+    viz.emit('input', data);
   });
 });
 

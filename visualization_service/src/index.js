@@ -2,7 +2,6 @@ const http = require('http');
 const express = require('express');
 const app = express();
 const serveStatic = require('serve-static');
-const getVisualization = require('./getVisualization');
 const PORT = 3002;
 const server = http.createServer(app);
 const io = require('socket.io')(server); //so we can serve the io client;

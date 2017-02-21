@@ -97,10 +97,16 @@
       }
     },
     receive: function(event, data) {
-      this.object.children.forEach(function (child, i) {
-        val = data.frequency[i] / 2;
-        child.scale.y = val ? val : 0.0001;
-      });
+      switch (event) {
+        case 'audio':
+          this.object.children.forEach(function (child, i) {
+            val = data.frequency[i] / 2;
+            child.scale.y = val ? val : 0.0001;
+          });
+          break;
+        default:
+      }
+
     }
   }
 

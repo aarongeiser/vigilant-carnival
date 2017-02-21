@@ -129,15 +129,19 @@
     },
 
     receive: function(event, data) {
-
-      plane.geometry.vertices.map(function(v, i) {
-        const val = defaultVertices[i].z * (data.volume / Object.keys(data.frequency).length);
-        v.z = val * 2;
-        return v;
-      });
-
       plane.rotation.x -= 0.005;
       plane.rotation.z += 0.001;
+
+      switch (event) {
+        case 'audio':
+          plane.geometry.vertices.map(function(v, i) {
+            const val = defaultVertices[i].z * (data.volume / Object.keys(data.frequency).length);
+            v.z = val * 2;
+            return v;
+          });
+          break;
+        default:
+      }
 
       this.render();
     }

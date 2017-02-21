@@ -28,7 +28,7 @@
       this.object = new THREE.Object3D();
       this.scene.add( this.object );
 
-      var geometry = new THREE.BoxGeometry( 1, 1, .2 );
+      var geometry = new THREE.BoxGeometry( 8, 500, 8 );
       var material = new THREE.MeshPhongMaterial( {
         color: 0xffffff,
         map: texture
@@ -40,7 +40,6 @@
         mesh.position.set( Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5 ).normalize();
         mesh.position.multiplyScalar( Math.random() * 400 );
         mesh.rotation.set( Math.random() * 2, Math.random() * 2, Math.random() * 2 );
-        mesh.scale.x = mesh.scale.y = mesh.scale.z = Math.random() * 50;
         this.object.add( mesh );
 
       }
@@ -56,24 +55,23 @@
       this.composer = new THREE.EffectComposer(this.renderer);
       const copyPass = new THREE.ShaderPass(THREE.CopyShader);
       const renderPass = new THREE.RenderPass(this.scene, this.camera);
-      // const filmPass = new THREE.ShaderPass(THREE.FilmShader);
-      // const mirrorPass = new THREE.ShaderPass(THREE.MirrorShader);
-      const kaleidoPass = new THREE.ShaderPass(THREE.KaleidoShader);
-      // const dotScreenPass = new THREE.ShaderPass(THREE.DotScreenShader);
+      const mirrorPass = new THREE.ShaderPass(THREE.MirrorShader);
+      // const kaleidoPass = new THREE.ShaderPass(THREE.KaleidoShader);
+      const dotScreenPass = new THREE.ShaderPass(THREE.DotScreenShader);
 
-      // mirrorPass.uniforms[ 'side' ].value = 0;
+      mirrorPass.uniforms[ 'side' ].value = 0;
       // filmPass.uniforms['tDiffuse'].value = 5;
       // filmPass.uniforms['sCount'].value = 800;
       // filmPass.uniforms['sIntensity'].value = 0.9;
       // filmPass.uniforms['nIntensity'].value = 0.8;
 
-      // dotScreenPass.uniforms['scale'].value = 2.5;
+      dotScreenPass.uniforms['scale'].value = 1;
 
       this.composer.addPass(renderPass);
-      // composer.addPass(dotScreenPass);
-      // this.composer.addPass(mirrorPass);
-      // composer.addPass(filmPass);
-      this.composer.addPass(kaleidoPass);
+      this.composer.addPass(mirrorPass);
+
+      // this.composer.addPass(dotScreenPass);
+      // this.composer.addPass(kaleidoPass);
 
 
       this.composer.addPass(copyPass);
@@ -86,8 +84,9 @@
 
       function animate () {
         that.reqId = requestAnimationFrame(animate);
-        that.object.rotation.x += 0.005;
-        that.object.rotation.y += 0.01;
+        that.object.rotation.x += 0.01;
+        // that.object.rotation.y += 0.01;
+        that.object.rotation.z += 0.01;
         that.composer.render(0.1);
       }
 
@@ -101,9 +100,14 @@
     },
 
     receive: function (event, data) {
-      this.object.scale.set(1, 1, 1);
-      const newScale = data.volume / Object.keys(data.frequency).length + 1;
-      this.object.scale.set(newScale, newScale, newScale);
+      switch (event) {
+        case 'audio':
+          this.object.scale.set(1, 1, 1);
+          const newScale = data.volume / Object.keys(data.frequency).length + 1;
+          this.object.scale.set(newScale, newScale, newScale);
+          break;
+        default:
+      }
     }
   };
 
