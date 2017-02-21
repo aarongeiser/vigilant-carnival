@@ -5,10 +5,11 @@
 		<% include ./partials/styles %>
 	</head>
 	<body>
-    <canvas id="audioCanvas"></canvas>
+		<canvas id="audioCanvas"></canvas>
+
+		<!-- KEY LIBRARIES HERE -->
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/assets/three/build/three.min.js"></script>
-    <script src="/assets/gsap/tweenMax.min.js"></script>
 		<script src="/assets/three/examples/js/shaders/CopyShader.js"></script>
 		<script src="/assets/three/examples/js/shaders/DotScreenShader.js"></script>
 		<script src="/assets/three/examples/js/shaders/RGBShiftShader.js"></script>
@@ -20,19 +21,17 @@
 		<script src="/assets/three/examples/js/postprocessing/MaskPass.js"></script>
 		<script src="/assets/three/examples/js/postprocessing/ShaderPass.js"></script>
 
+		<!-- APP UTILITY: USED TO REGISTER AND QUEUE VISUALIZATIONS -->
+		<script src="/assets/js/app.js"></script>
 
+		<!-- ADD VISUALIZATION SCRIPTS HERE -->
+		<script src="/assets/js/3d/003.js"></script>
+		<script src="/assets/js/3d/002.js"></script>
+		<script src="/assets/js/3d/001.js"></script>
 
-    <script src="/assets/js/app.js"></script>
-
-    <!-- ADD VISUALIZATION SCRIPTS HERE -->
-    <script src="/assets/js/3d/002.js"></script>
-    <script src="/assets/js/3d/001.js"></script>
-    <script src="/assets/js/3d/003.js"></script>
-
-    <!-- <script src="/assets/js/frequency/index.js"></script> -->
-
-    <script>
-      window.VIZ.play();
-    </script>
+		<!-- RUN THE PLAYER -->
+		<script>
+			window.VIZ.play();
+		</script>
 	</body>
 </html>

@@ -58,11 +58,11 @@
       hemiLight.castshadow = true;
       scene.add( hemiLight );
 
-      var light = new THREE.PointLight(0xff0000, 2, 100);
+      var light = new THREE.PointLight(0xff0000, 50, 20, 3);
       light.castshadow = true;
       scene.add(light);
 
-      var light2 = new THREE.PointLight(0x00ffff, 2, 100);
+      var light2 = new THREE.PointLight(0x00ffff, 2, 50);
       light2.castshadow = true;
       scene.add(light2);
     },
@@ -81,7 +81,6 @@
         def.z = rand(-config.variance.z, config.variance.z);
       });
 
-      // plane.rotation.set(0,0,0);
       scene.add(plane);
     },
 
@@ -104,26 +103,6 @@
       }
       plane.geometry.verticesNeedUpdate = true;
       plane.geometry.computeFaceNormals();
-    },
-
-    randomTween: function(i, speed) {
-      speed = speed || config.speed;
-      var defaultVert = defaultVertices[i];
-      var tween = TweenLite.to(plane.geometry.vertices[i], speed, {
-        x: rand(-config.variance.x, config.variance.x) + defaultVert.x,
-        y: rand(-config.variance.y, config.variance.y) + defaultVert.y,
-        z: rand(-config.variance.z, config.variance.z), //rand(-config.vertexHeight,config.vertexHeight),
-      });
-
-      return tween;
-    },
-
-    randomTweens: function () {
-      var tweens = [];
-      for (var i = 0; i < plane.geometry.vertices.length; i++) {
-        tweens.push(this.randomTween(i), 0);
-      }
-      return tweens;
     },
 
     resize: function() {
@@ -152,14 +131,10 @@
 
     play: function () {
       this.init();
-      // renderer.setClearColor(0xeeeeee);
       renderer.render(scene, camera);
-      // TweenLite.ticker.addEventListener('tick', this.render);
-      // this.randomTweens();
     },
 
     destroy: function() {
-      // TweenLite.ticker.removeEventListener('tick', this.render);
       camera =
       scene =
       plane =
@@ -171,17 +146,12 @@
 
     receive: function(event, data) {
 
-      // const val = data.volume / 4;
-
       plane.geometry.vertices.map(function(v, i) {
-
         const val = defaultVertices[i].z * (data.volume / Object.keys(data.frequency).length);
-
         v.z = val * 2;
         return v;
       });
 
-      // plane.rotation.y += 0.005;
       plane.rotation.x -= 0.005;
       plane.rotation.z += 0.005;
 
