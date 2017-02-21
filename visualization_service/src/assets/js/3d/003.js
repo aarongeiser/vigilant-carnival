@@ -1,19 +1,3 @@
-// function mapToRange (inVal = 0.5, inMin = 0.0, inMax = 1.0, outMin = -45.0, outMax = 45.0) {
-//   const within = (inVal => inMin && inVal <= inMax);
-//   let val = inVal;
-//   if (!within) return val;
-//   if (outMin < 0) {
-//     val = ((Math.abs(outMin) + Math.abs(outMax)) * (val / inMax)) + outMin;
-//   } else {
-//     val = (outMax - outMin) * (val / inMax);
-//   }
-//
-//   console.log({ val });
-//
-//   return val;
-//
-// }
-
 (function($V) {
 
   var camera, scene, texture, plane, renderer, W, H, defaultVertices;
