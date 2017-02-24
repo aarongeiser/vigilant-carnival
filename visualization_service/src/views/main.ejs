@@ -16,6 +16,7 @@
 		<script src="/assets/three/examples/js/shaders/MirrorShader.js"></script>
 		<script src="/assets/three/examples/js/shaders/KaleidoShader.js"></script>
 		<script src="/assets/three/examples/js/shaders/FilmShader.js"></script>
+		<script src="/assets/three/examples/js/shaders/FXAAShader.js"></script>
 		<script src="/assets/three/examples/js/postprocessing/EffectComposer.js"></script>
 		<script src="/assets/three/examples/js/postprocessing/RenderPass.js"></script>
 		<script src="/assets/three/examples/js/postprocessing/MaskPass.js"></script>
@@ -25,13 +26,14 @@
 		<script src="/assets/js/app.js"></script>
 
 		<!-- ADD VISUALIZATION SCRIPTS HERE -->
-		<script src="/assets/js/3d/001.js"></script>
-		<script src="/assets/js/3d/003.js"></script>
 		<script src="/assets/js/3d/002.js"></script>
+		<script src="/assets/js/3d/001.js"></script>
+		<script src="/assets/js/3d/004.js"></script>
+		<script src="/assets/js/3d/003.js"></script>
 
 		<!-- RUN THE PLAYER -->
 		<script>
-			window.VIZ.play();
+			window.VIZ.loadTextures(window.VIZ.play);
 		</script>
 	</body>
 </html>

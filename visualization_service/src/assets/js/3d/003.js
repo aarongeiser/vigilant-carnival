@@ -1,6 +1,6 @@
 (function($V) {
 
-  var camera, scene, texture, plane, renderer, W, H, defaultVertices;
+  var camera, scene, texture, plane, renderer, W, H, defaultVertices, planeMaterial;
   var config = {
     variance: {
       x: 0.8,
@@ -20,14 +20,22 @@
     return min + (Math.random() * (max - min + 1));
   }
 
-  var image = new Image();
-  image.onload = function () { texture.needsUpdate = true; };
-  image.src = '/assets/stripes.png';
 
-  var texture = new THREE.Texture(image, false, THREE.RepeatWrapping, THREE.RepeatWrapping, THREE.NearestFilter, THREE.LinearMipMapLinearFilter);
+  window.expandTexture = function(size) {
+    var texture = $V.getTexture();
 
-  texture.repeat.x = 40;
-  texture.repeat.y = 40;
+    console.log(texture);
+    plane.material.map = texture;
+    plane.material.map.needsUpdate = true;
+    plane.material.needsUpdate = true;
+    plane.needsUpdate = true;
+    // planeMaterial.map = texture;
+    // if (size) {
+    //   texture.repeat.x = texture.repeat.y = size;
+    // }
+
+  }
+
 
   var three003 = {
 
@@ -52,11 +60,15 @@
     },
 
     createPlane: function () {
+      var texture = $V.getTexture();
       var planeGeometry = new THREE.PlaneGeometry(80, 80, config.planeDefinition, config.planeDefinition);
-      var planeMaterial = new THREE.MeshLambertMaterial({
+      planeMaterial = new THREE.MeshLambertMaterial({
         map: texture,
         side: THREE.DoubleSide
       });
+      texture.needsUpdate = true;
+      texture.repeat.x = 20;
+      texture.repeat.y = 20;
 
       plane = new THREE.Mesh(planeGeometry, planeMaterial);
       defaultVertices = plane.geometry.clone().vertices;

@@ -4,6 +4,12 @@
   var duration = 60000;
   var position = 0;
   var currentVizualization = null;
+  var currentTexture = 0;
+
+  var textures = [
+    '/assets/hex.png',
+    '/assets/stripes.png'
+  ];
 
   /**
    * Visualizations will require " destroy, play, and receive" methods
@@ -40,6 +46,26 @@
       curr.replaceWith(reset);
     },
 
+    loadTextures: function(cb) {
+      var loadedTextures = 0;
+      var that = this;
+      textures = textures.map((t, i) => {
+        var image = new Image();
+        image.src = t;
+        var texture = new THREE.Texture(image, false, THREE.RepeatWrapping, THREE.RepeatWrapping, THREE.NearestFilter, THREE.LinearMipMapLinearFilter);
+        image.onload = function() {
+          console.log('texture loaded', image.src);
+          texture.needsUpdate = true;
+          loadedTextures++;
+          if (loadedTextures >= textures.length) {
+            cb.call(that);
+          }
+        }
+        return texture;
+      });
+
+    },
+
     play: function () {
       if (visualizations.length) {
         currentVizualization = visualizations[position];
@@ -62,6 +88,15 @@
       socket.on('input', data => {
         currentVizualization.receive('input', data);
       });
+    },
+
+    getTexture: function () {
+      currentTexture++;
+      if (currentTexture >= textures.length) {
+        currentTexture = 0;
+      }
+
+      return textures[currentTexture];
     },
 
     init: function () {

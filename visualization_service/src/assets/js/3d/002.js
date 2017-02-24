@@ -4,13 +4,6 @@
   var SLICE_WIDTH = 5;
   var GAP = 1;
 
-  var image = new Image();
-  image.onload = function () { texture.needsUpdate = true; };
-  image.src = '/assets/stripes.png';
-
-  var texture = new THREE.Texture(image, false, THREE.RepeatWrapping, THREE.RepeatWrapping, THREE.NearestFilter, THREE.LinearMipMapLinearFilter);
-
-
   var three002 = {
     scene: null,
     camera: null,
@@ -20,12 +13,15 @@
     object: null,
     addBars: function() {
       var geometry = new THREE.BoxGeometry(SLICE_WIDTH, SLICE_WIDTH, 25);
+      var texture = $V.getTexture();
+      texture.needsUpdate = true;
+      // texture.repeat.x = 20;
+      // texture.repeat.y = 20;
       var material = new THREE.MeshPhongMaterial({
         color: 0xffffff,
         map: texture
       });
       var increment = GAP;
-      var HEIGHT = window.innerHeight;
       var xpos = 0;
 
       for ( var i = 0; i < 128; i ++ ) {
@@ -100,7 +96,7 @@
       switch (event) {
         case 'audio':
           this.object.children.forEach(function (child, i) {
-            val = data.frequency[i] / 2;
+            var val = data.frequency[i] / 2;
             child.scale.y = val ? val : 0.0001;
           });
           break;

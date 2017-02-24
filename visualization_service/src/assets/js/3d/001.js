@@ -1,11 +1,5 @@
 (function($V) {
 
-  var image = new Image();
-  image.onload = function () { texture.needsUpdate = true; };
-  image.src = '/assets/stripes.png';
-
-  var texture = new THREE.Texture(image, false, THREE.RepeatWrapping, THREE.RepeatWrapping, THREE.NearestFilter, THREE.LinearMipMapLinearFilter);
-
   var three001 = {
     camera: null,
     scene: null,
@@ -28,16 +22,21 @@
       this.object = new THREE.Object3D();
       this.scene.add( this.object );
 
-      var geometry = new THREE.BoxGeometry( 8, 500, 8 );
+      var texture = $V.getTexture();
+      texture.needsUpdate = true;
+      // texture.repeat.x = 20;
+      // texture.repeat.y = 20;
+
+      var geometry = new THREE.BoxGeometry( 10, 10, 500 );
       var material = new THREE.MeshPhongMaterial( {
         color: 0xffffff,
         map: texture
       });
 
-      for ( var i = 0; i < 100; i ++ ) {
+      for ( var i = 0; i < 50; i ++ ) {
 
         var mesh = new THREE.Mesh( geometry, material );
-        mesh.position.set( Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5 ).normalize();
+        mesh.position.set( Math.random() - 0.2, Math.random() - 0.2, Math.random() - 0.2 ).normalize();
         mesh.position.multiplyScalar( Math.random() * 400 );
         mesh.rotation.set( Math.random() * 2, Math.random() * 2, Math.random() * 2 );
         this.object.add( mesh );
@@ -57,7 +56,7 @@
       const renderPass = new THREE.RenderPass(this.scene, this.camera);
       const mirrorPass = new THREE.ShaderPass(THREE.MirrorShader);
       // const kaleidoPass = new THREE.ShaderPass(THREE.KaleidoShader);
-      const dotScreenPass = new THREE.ShaderPass(THREE.DotScreenShader);
+      // const dotScreenPass = new THREE.ShaderPass(THREE.DotScreenShader);
 
       mirrorPass.uniforms[ 'side' ].value = 0;
       // filmPass.uniforms['tDiffuse'].value = 5;
@@ -65,7 +64,7 @@
       // filmPass.uniforms['sIntensity'].value = 0.9;
       // filmPass.uniforms['nIntensity'].value = 0.8;
 
-      dotScreenPass.uniforms['scale'].value = 1;
+      // dotScreenPass.uniforms['scale'].value = 3;
 
       this.composer.addPass(renderPass);
       this.composer.addPass(mirrorPass);
@@ -85,9 +84,14 @@
       function animate () {
         that.reqId = requestAnimationFrame(animate);
         that.object.rotation.x += 0.01;
-        // that.object.rotation.y += 0.01;
-        that.object.rotation.z += 0.01;
+        that.object.rotation.y -= 0.01;
+        that.object.children.forEach(function(child, i) {
+          child.rotation.x += 0.01;
+          child.rotation.y -= 0.01;
+          child.rotation.z += 0.01;
+        });
         that.composer.render(0.1);
+
       }
 
       this.reqId = requestAnimationFrame(animate);
