@@ -7,8 +7,8 @@
   var currentTexture = 0;
 
   var textures = [
-    '/assets/hex.png',
-    '/assets/stripes.png'
+    '/assets/stripes.png',
+    '/assets/hex.png'
   ];
 
   /**
@@ -26,6 +26,20 @@
     },
 
     advance: function() {
+      var len = visualizations.length;
+      if (this.timeout) {
+        clearTimeout(this.timeout);
+      }
+      if (currentVizualization) {
+        currentVizualization.destroy();
+      }
+      position = position + 1 >= len ? 0 : ++position;
+      currentVizualization = visualizations[position];
+      currentVizualization.play();
+
+    },
+
+    autoAdvance: function() {
       var that = this;
       var len = visualizations.length;
       if (len < 2) { return; }
@@ -46,6 +60,33 @@
       curr.replaceWith(reset);
     },
 
+    hslToRgb: function(h, s = 1, l = 0.5) {
+      let r, g, b, hex;
+
+      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      const p = 2 * l - q;
+
+      function hue2rgb(p, q, t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1 / 6) return p + (q - p) * 6 * t;
+        if (t < 1 / 2) return q;
+        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+        return p;
+      }
+
+      r = hue2rgb(p, q, h + 1 / 3) * 255;
+      g = hue2rgb(p, q, h) * 255;
+      b = hue2rgb(p, q, h - 1 / 3) * 255;
+
+      hex = [r, g, b].map(color => {
+        return ('0' + Math.round(color).toString(16)).slice(-2);
+      }).join('');
+
+      return '#' + hex;
+
+    },
+
     loadTextures: function(cb) {
       var loadedTextures = 0;
       var that = this;
@@ -53,9 +94,8 @@
         var image = new Image();
         image.src = t;
         var texture = new THREE.Texture(image, false, THREE.RepeatWrapping, THREE.RepeatWrapping, THREE.NearestFilter, THREE.LinearMipMapLinearFilter);
+        texture.needsUpdate = true;
         image.onload = function() {
-          console.log('texture loaded', image.src);
-          texture.needsUpdate = true;
           loadedTextures++;
           if (loadedTextures >= textures.length) {
             cb.call(that);
@@ -63,14 +103,21 @@
         }
         return texture;
       });
+    },
 
+    getTexture: function () {
+      currentTexture++;
+      if (currentTexture >= textures.length) {
+        currentTexture = 0;
+      }
+      return textures[currentTexture];
     },
 
     play: function () {
       if (visualizations.length) {
         currentVizualization = visualizations[position];
         currentVizualization.play();
-        this.advance();
+        this.autoAdvance();
       }
     },
 
@@ -78,7 +125,9 @@
       socket = io('http://localhost:3001/viz');
       socket.on('connect', () => {
         socket.on('audio', function(data) {
-          currentVizualization.receive('audio', data);
+          if (currentVizualization) {
+            currentVizualization.receive('audio', data);
+          }
         });
         socket.on('down', function(data) {
           currentVizualization.receive('down', data);
@@ -90,17 +139,18 @@
       });
     },
 
-    getTexture: function () {
-      currentTexture++;
-      if (currentTexture >= textures.length) {
-        currentTexture = 0;
-      }
-
-      return textures[currentTexture];
+    setLightColor: function (light, hue) {
+      light.color.setHex('0x' + this.hslToRgb(hue).split('#')[1]);
     },
 
     init: function () {
       this.connect();
+      var that = this;
+      window.addEventListener('keyup', function(e) {
+        if (e.keyCode === 32) { //space-bar
+          that.advance();
+        }
+      }, false);
       return this;
     }
 

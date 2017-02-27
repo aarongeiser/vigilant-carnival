@@ -15,8 +15,8 @@
       var geometry = new THREE.BoxGeometry(SLICE_WIDTH, SLICE_WIDTH, 25);
       var texture = $V.getTexture();
       texture.needsUpdate = true;
-      // texture.repeat.x = 20;
-      // texture.repeat.y = 20;
+      texture.repeat.x = 1; //range .2 - 2
+      texture.repeat.y = 1; //range .2 - 2
       var material = new THREE.MeshPhongMaterial({
         color: 0xffffff,
         map: texture
@@ -50,11 +50,15 @@
 
       this.addBars();
 
-      this.scene.add(new THREE.AmbientLight(0x666666));
+      this.scene.add(new THREE.AmbientLight(0x999999));
 
-      this.light = new THREE.DirectionalLight(0xffffff);
-      this.light.position.set(-20, -10, 1);
-      this.scene.add(this.light);
+      this.light1 = new THREE.DirectionalLight($V.hslToRgb(.2));
+      this.light1.position.set(1, 20, 1);
+      this.scene.add(this.light1);
+
+      this.light2 = new THREE.DirectionalLight($V.hslToRgb(.8));
+      this.light2.position.set(1, -20, 1);
+      this.scene.add(this.light2);
 
       this.composer = new THREE.EffectComposer(this.renderer);
       const copyPass = new THREE.ShaderPass(THREE.CopyShader);

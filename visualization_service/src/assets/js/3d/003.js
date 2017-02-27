@@ -21,20 +21,20 @@
   }
 
 
-  window.expandTexture = function(size) {
-    var texture = $V.getTexture();
-
-    console.log(texture);
-    plane.material.map = texture;
-    plane.material.map.needsUpdate = true;
-    plane.material.needsUpdate = true;
-    plane.needsUpdate = true;
-    // planeMaterial.map = texture;
-    // if (size) {
-    //   texture.repeat.x = texture.repeat.y = size;
-    // }
-
-  }
+  // window.expandTexture = function(size) {
+  //   var texture = $V.getTexture();
+  //
+  //   console.log(texture);
+  //   plane.material.map = texture;
+  //   plane.material.map.needsUpdate = true;
+  //   plane.material.needsUpdate = true;
+  //   plane.needsUpdate = true;
+  //   // planeMaterial.map = texture;
+  //   // if (size) {
+  //   //   texture.repeat.x = texture.repeat.y = size;
+  //   // }
+  //
+  // }
 
 
   var three003 = {
@@ -46,17 +46,17 @@
     },
 
     createLights: function() {
-      var hemiLight = new THREE.HemisphereLight( 0xffffff, 0x484848, 0.8);
-      hemiLight.castshadow = true;
-      scene.add( hemiLight );
+      this.hemiLight = new THREE.HemisphereLight( 0x000000, 0xffffff, 0.7);
+      this.hemiLight.castshadow = true;
+      scene.add( this.hemiLight );
 
-      var light = new THREE.PointLight(0xff0000, 50, 20, 3);
-      light.castshadow = true;
-      scene.add(light);
+      this.light1 = new THREE.PointLight($V.hslToRgb(1), 10, 100, 2);
+      this.light1.position.set(1, 20, 1);
+      scene.add(this.light1);
 
-      var light2 = new THREE.PointLight(0x00ffff, 2, 50);
-      light2.castshadow = true;
-      scene.add(light2);
+      this.light2 = new THREE.PointLight($V.hslToRgb(.6), 10, 100, 2);
+      this.light2.position.set(1, -20, 1);
+      scene.add(this.light2);
     },
 
     createPlane: function () {
@@ -66,9 +66,9 @@
         map: texture,
         side: THREE.DoubleSide
       });
-      texture.needsUpdate = true;
       texture.repeat.x = 20;
       texture.repeat.y = 20;
+      texture.needsUpdate = true;
 
       plane = new THREE.Mesh(planeGeometry, planeMaterial);
       defaultVertices = plane.geometry.clone().vertices;
@@ -141,8 +141,12 @@
     },
 
     receive: function(event, data) {
-      plane.rotation.x -= 0.005;
-      plane.rotation.z += 0.001;
+      plane.rotation.x -= 0.01;
+      plane.rotation.z += 0.01;
+      this.hemiLight.position.z += 0.01;
+      // this.hemiLight.position.y += 0.01;
+      this.hemiLight.position.x -= 0.01;
+      // plane.rotation.y -= 0.01;
 
       switch (event) {
         case 'audio':

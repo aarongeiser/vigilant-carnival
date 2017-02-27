@@ -10,9 +10,9 @@
     composer: null,
     light: null,
     object: [],
-    addParticles: function() {
+    addBars: function() {
 
-      var xpos = 0;
+      var xpos = -(window.innerWidth / 4);
       var increment = GAP;
       var num = 128;
       var w = (window.innerWidth - (128 * increment)) / num;
@@ -24,8 +24,8 @@
         var mesh = new THREE.Mesh(geometry, material);
 
         texture.needsUpdate = true;
-        texture.repeat.x = 20;
-        texture.repeat.y = 20;
+        // texture.repeat.x = 20;
+        // texture.repeat.y = 20;
         xpos += i === 0 ? xpos : w + increment;
         mesh.position.set(xpos, 1, 10);
 
@@ -45,32 +45,24 @@
 
       this.object = new THREE.Object3D();
 
-      this.object.position.x -= window.innerWidth / 2;
-
-      // this.object.rotation.x = 30;
-
       this.scene.add(this.object);
 
-      this.addParticles();
+      this.addBars();
 
       this.scene.add(new THREE.AmbientLight(0x999999));
 
-      var light = new THREE.DirectionalLight(0x0f0000);
-      light.position.set(50, 1, 1);
-      this.scene.add(light);
+      this.light1 = new THREE.DirectionalLight($V.hslToRgb(.2));
+      this.light1.position.set(20, 1, 1);
+      this.scene.add(this.light1);
 
-      var light = new THREE.DirectionalLight(0xffffff);
-      light.position.set(-50, 1, 1);
-      this.scene.add(light);
+      this.light2 = new THREE.DirectionalLight($V.hslToRgb(.8));
+      this.light2.position.set(-20, 1, 1);
+      this.scene.add(this.light2);
 
       this.composer = new THREE.EffectComposer(this.renderer);
       const copyPass = new THREE.ShaderPass(THREE.CopyShader);
       const renderPass = new THREE.RenderPass(this.scene, this.camera);
       this.composer.addPass(renderPass);
-      // const fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
-      // this.composer.addPass(fxaaPass);
-      // const mirrorPass = new THREE.ShaderPass(THREE.MirrorShader);
-      // this.composer.addPass(mirrorPass);
       this.composer.addPass(copyPass);
       copyPass.renderToScreen = true;
     },
@@ -87,17 +79,12 @@
         // that.camera.lookAt(that.scene.position);
         that.object.children.forEach(function(child, i) {
           child.rotation.y += 0.05;
-          // if (child.rotation.x = 0.005) {
-          //   child.rotation.x -= (0.001 - ((i - 1) / 8000));
-          // } else if (child.rotation.x >= 0.005) {
-          //
-          // }
-          // child.rotation.z += (0.001 - ((i - 1) / 8000));
           child.rotation.x += (0.001 - ((i - 1) / 8000));
         });
 
-        // that.object.rotation.x -= 0.05;
-        // that.object.rotation.z -= 0.001;
+        that.object.rotation.y -= 0.005;
+        that.object.rotation.x += 0.005;
+        that.object.rotation.z -= 0.015;
 
 
         that.composer.render(0.1);

@@ -14,7 +14,7 @@
       this.renderer.setSize( window.innerWidth, window.innerHeight );
 
       this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );
-      this.camera.position.z = 400;
+      this.camera.position.z = 500;
 
       this.scene = new THREE.Scene();
       this.scene.fog = new THREE.Fog( 0x000000, 1, 1000 );
@@ -23,13 +23,16 @@
       this.scene.add( this.object );
 
       var texture = $V.getTexture();
-      texture.needsUpdate = true;
-      // texture.repeat.x = 20;
-      // texture.repeat.y = 20;
 
-      var geometry = new THREE.BoxGeometry( 10, 10, 500 );
+      texture.repeat.x = 2;
+      texture.repeat.y = .5;
+
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      texture.needsUpdate = true;
+
+      var geometry = new THREE.BoxGeometry( 15, 500, 15 );
       var material = new THREE.MeshPhongMaterial( {
-        color: 0xffffff,
         map: texture
       });
 
@@ -43,11 +46,15 @@
 
       }
 
-      this.scene.add( new THREE.AmbientLight( 0x666666 ) );
+      this.scene.add(new THREE.AmbientLight(0x999999));
 
-      this.light = new THREE.DirectionalLight( 0xffffff );
-      this.light.position.set( 1, 90, 90 );
-      this.scene.add( this.light );
+      this.light1 = new THREE.DirectionalLight($V.hslToRgb(.01));
+      this.light1.position.set(1, 20, 1);
+      this.scene.add(this.light1);
+
+      this.light2 = new THREE.DirectionalLight($V.hslToRgb(.6));
+      this.light2.position.set(1, -20, 1);
+      this.scene.add(this.light2);
 
       // postprocessing
 
@@ -84,7 +91,7 @@
       function animate () {
         that.reqId = requestAnimationFrame(animate);
         that.object.rotation.x += 0.01;
-        that.object.rotation.y -= 0.01;
+        // that.object.rotation.y -= 0.01;
         that.object.children.forEach(function(child, i) {
           child.rotation.x += 0.01;
           child.rotation.y -= 0.01;
