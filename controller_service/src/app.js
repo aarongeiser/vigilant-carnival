@@ -63,13 +63,14 @@ function smoothInput(buffer, value) {
 }
 */
 
-pollPin(7, process.env.CONTROLLER_NAME + "-button1");
-pollPin(8, process.env.CONTROLLER_NAME + "-button2");
-pollPin(10, process.env.CONTROLLER_NAME + "-up");
-pollPin(11, process.env.CONTROLLER_NAME + "-right");
-pollPin(12, process.env.CONTROLLER_NAME + "-down");
-pollPin(13, process.env.CONTROLLER_NAME + "-left");
-pollPot(0, process.env.CONTROLLER_NAME + "-pot1");
+pollPin(7, "button1");
+pollPin(8, "button2");
+pollPin(10, "up");
+pollPin(11, "right");
+pollPin(12, "down");
+pollPin(13, "left");
+pollPot(0, "pot1");
+pollPot(1, "pot2");
 
 // Initial console log
 console.log('Running...');
