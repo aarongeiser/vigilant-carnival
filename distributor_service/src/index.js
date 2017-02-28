@@ -24,6 +24,7 @@ inputs.on('connection', client => {
   console.log("I have an input...");
   client.emit('event', { message: "You are now connected!" })
   client.on('input', data => {
+    console.log(data);
     viz.emit('input', data);
   });
 });

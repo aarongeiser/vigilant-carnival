@@ -11,16 +11,17 @@ rpio.init({gpiomem: false}); /* Use /dev/mem */
 
 // Poll pin
 function pollPin(gpioPin, inputName) {
-    rpio.open(gpioPin, rpio.INPUT, rpio.PULL_UP);
-    rpio.poll(gpioPin, function (pin) {
-        var state = rpio.read(pin) ? 'released' : 'pressed';
-        console.log('Button event on P%d (button currently %s)', pin, state);
-        socket.emit('input', {
-        	'name'		: inputName,
-            'source' 	: process.env.CONTROLLER_NAME,
-            'value'		: rpio.read(pin)
-        });
+  rpio.open(gpioPin, rpio.INPUT, rpio.PULL_UP);
+  rpio.poll(gpioPin, function (pin) {
+    var value = rpio.read(pin);
+    var state = value ? 'released' : 'pressed';
+    console.log('Button event on P%d (button currently %s)', pin, state);
+    socket.emit('input', {
+      'name': inputName,
+      'source': process.env.CONTROLLER_NAME,
+      'value': value
     });
+  });
 }
 
 function pollPot(adcChannel, inputName) {
@@ -31,10 +32,10 @@ function pollPot(adcChannel, inputName) {
 				var value = reading.value.toFixed(2);
 				if (value != buffer) {
 					console.log('Pot value: %d', value);
-					socket.emit(inputName, {
-						'name'		: inputName,
-						'source' 	: process.env.CONTROLLER_NAME,
-						'value' 	: value
+					socket.emit('input', {
+						'name': inputName,
+						'source': process.env.CONTROLLER_NAME,
+						'value': value
 					});
 					buffer = value;
 				}

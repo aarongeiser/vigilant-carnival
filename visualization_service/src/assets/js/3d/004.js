@@ -19,7 +19,7 @@
 
       for (var i = 0; i < num; i ++ ) {
         var texture = $V.getTexture();
-        var geometry = new THREE.BoxGeometry(5, window.innerHeight, 5);
+        var geometry = new THREE.BoxGeometry(10, window.innerHeight, 10);
         var material = new THREE.MeshPhongMaterial({ map: texture, color: 0xffffff });
         var mesh = new THREE.Mesh(geometry, material);
 
@@ -101,10 +101,9 @@
     receive: function(event, data) {
       switch (event) {
         case 'audio':
-          // this.object.children.forEach(function (child, i) {
-          //   var scale = (data.volume / data.frequency[i] + 1) / 8
-          //   child.scale.y = scale <= 0.01 ? 0.01 : scale;
-          // });
+          this.object.scale.set(1, 1, 1);
+          const newScale = data.volume / Object.keys(data.frequency).length + 1;
+          this.object.scale.set(newScale, newScale, newScale);
           break;
         default:
       }

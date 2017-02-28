@@ -24,14 +24,14 @@
 
       var texture = $V.getTexture();
 
-      texture.repeat.x = 2;
-      texture.repeat.y = .5;
-
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
+      // texture.repeat.x = 4;
+      texture.repeat.y = 8;
+
       texture.needsUpdate = true;
 
-      var geometry = new THREE.BoxGeometry( 15, 500, 15 );
+      var geometry = new THREE.BoxGeometry( 500, 10, 10 );
       var material = new THREE.MeshPhongMaterial( {
         map: texture
       });
@@ -62,24 +62,11 @@
       const copyPass = new THREE.ShaderPass(THREE.CopyShader);
       const renderPass = new THREE.RenderPass(this.scene, this.camera);
       const mirrorPass = new THREE.ShaderPass(THREE.MirrorShader);
-      // const kaleidoPass = new THREE.ShaderPass(THREE.KaleidoShader);
-      // const dotScreenPass = new THREE.ShaderPass(THREE.DotScreenShader);
 
       mirrorPass.uniforms[ 'side' ].value = 0;
-      // filmPass.uniforms['tDiffuse'].value = 5;
-      // filmPass.uniforms['sCount'].value = 800;
-      // filmPass.uniforms['sIntensity'].value = 0.9;
-      // filmPass.uniforms['nIntensity'].value = 0.8;
-
-      // dotScreenPass.uniforms['scale'].value = 3;
 
       this.composer.addPass(renderPass);
       this.composer.addPass(mirrorPass);
-
-      // this.composer.addPass(dotScreenPass);
-      // this.composer.addPass(kaleidoPass);
-
-
       this.composer.addPass(copyPass);
       copyPass.renderToScreen = true;
     },
