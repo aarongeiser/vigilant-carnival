@@ -8,4 +8,5 @@ DOCKER_MAPPED_VOLUMES = -v $(shell pwd)/src:/src
 DOCKER_ENV = \
 	-e NODE_ENV=development \
 	-e CONTROLLER_NAME=input-a \
-	-e SOCKET_ADDRESS=http://127.0.0.1:3001/input
+	-e SOCKET_ADDRESS=http://127.0.0.1:3001/input \
+	-e NUM_POTS=1

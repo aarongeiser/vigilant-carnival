@@ -69,8 +69,13 @@ pollPin(10, "up");
 pollPin(11, "right");
 pollPin(12, "down");
 pollPin(13, "left");
-pollPot(0, "pot1");
-pollPot(1, "pot2");
+
+if (process.env.NUM_POTS == 2) {
+	pollPot(0, "pot1");
+	pollPot(1, "pot2");
+} else {
+	pollPot(0, "pot1");
+}
 
 // Initial console log
 console.log('Running...');
