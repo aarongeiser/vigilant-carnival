@@ -1,6 +1,6 @@
 (function($V) {
 
-  var camera, scene, texture, plane, renderer, W, H, defaultVertices, planeMaterial;
+  var camera, scene, texture, plane, renderer, W, H, defaultVertices, hemiLight, planeMaterial;
   var config = {
     variance: {
       x: 0.8,
@@ -9,7 +9,8 @@
     },
     speed: 10,
     planeSize: 80,
-    planeDefinition: 8
+    planeDefinition: 8,
+    repeatSize: 20
   };
 
   function rand (min, max) {
@@ -46,9 +47,9 @@
     },
 
     createLights: function() {
-      this.hemiLight = new THREE.HemisphereLight( 0x000000, 0xffffff, 0.7);
-      this.hemiLight.castshadow = true;
-      scene.add( this.hemiLight );
+      hemiLight = new THREE.HemisphereLight( 0x000000, 0xffffff, 0.7);
+      hemiLight.castshadow = true;
+      scene.add(hemiLight);
 
       this.light1 = new THREE.PointLight($V.hslToRgb(1), 10, 100, 2);
       this.light1.position.set(1, 20, 1);
@@ -66,8 +67,7 @@
         map: texture,
         side: THREE.DoubleSide
       });
-      texture.repeat.x = 20;
-      texture.repeat.y = 20;
+      texture.repeat.x = texture.repeat.y = config.repeatSize;
       texture.needsUpdate = true;
 
       plane = new THREE.Mesh(planeGeometry, planeMaterial);
@@ -127,27 +127,29 @@
 
     play: function () {
       this.init();
-      renderer.render(scene, camera);
+      var that = this;
+
+      function animate () {
+        that.reqId = requestAnimationFrame(animate);
+
+        plane.rotation.x -= 0.01;
+        plane.rotation.z -= 0.01;
+        hemiLight.position.z += 0.01;
+        hemiLight.position.x -= 0.01;
+
+        renderer.render(scene, camera);
+      }
+
+      this.reqId = requestAnimationFrame(animate);
     },
 
     destroy: function() {
-      camera =
-      scene =
-      plane =
-      renderer =
-      W =
-      H =
-      defaultVertices = null;
+      if (this.reqId) {
+        window.cancelAnimationFrame(this.reqId);
+      }
     },
 
     receive: function(event, data) {
-      plane.rotation.x -= 0.01;
-      plane.rotation.z += 0.01;
-      this.hemiLight.position.z += 0.01;
-      // this.hemiLight.position.y += 0.01;
-      this.hemiLight.position.x -= 0.01;
-      // plane.rotation.y -= 0.01;
-
       switch (event) {
         case 'audio':
           plane.geometry.vertices.map(function(v, i) {
@@ -156,10 +158,46 @@
             return v;
           });
           break;
+        case 'input':
+          return this.handleInput(data);
         default:
       }
 
       this.render();
+    },
+
+    handleInput: function(data) {
+      console.log(data);
+      var input = data.source + '-' + data.name;
+      switch (input) {
+        case 'texture-button1':
+          if (data.value === 1) {
+            var texture = $V.getTexture();
+            texture.repeat.x = texture.repeat.y = config.repeatSize;
+            texture.needsUpdate;
+            plane.material.map = texture;
+            plane.material.map.needsUpdate = true;
+            plane.material.needsUpdate = true;
+            plane.needsUpdate = true;
+          }
+          break;
+        case 'texture-pot1':
+          var num = parseFloat(data.value, 10);
+          var perc = (config.repeatSize * num);
+          if (perc < 1) {
+            perc = 1;
+          }
+          plane.material.map.repeat.x = perc;
+          plane.material.map.repeat.y = perc;
+          plane.needsUpdate = true;
+          break;
+        case 'lighting-pot1':
+          $V.setLightColor(this.light1, parseFloat(data.value, 10));
+          break;
+        case 'lighting-pot2':
+          $V.setLightColor(this.light2, parseFloat(data.value, 10));
+          break;
+      }
     }
   };
 

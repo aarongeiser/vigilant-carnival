@@ -1,5 +1,9 @@
 (function($V) {
 
+  var config = {
+    repeatSize: 1
+  };
+
   var three001 = {
     camera: null,
     scene: null,
@@ -26,9 +30,7 @@
 
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
-      // texture.repeat.x = 4;
-      texture.repeat.y = 8;
-
+      texture.repeat.x = texture.repeat.y = config.repeatSize;
       texture.needsUpdate = true;
 
       var geometry = new THREE.BoxGeometry( 500, 10, 10 );
@@ -104,9 +106,48 @@
           const newScale = data.volume / Object.keys(data.frequency).length + 1;
           this.object.scale.set(newScale, newScale, newScale);
           break;
+        case 'input':
+          return this.handleInput(data);
         default:
       }
+    },
+
+    handleInput: function(data) {
+      var input = data.source + '-' + data.name;
+      switch (input) {
+        case 'texture-button1':
+          if (data.value === 1) {
+            var texture = $V.getTexture();
+            texture.repeat.x = texture.repeat.y = config.repeatSize;
+            texture.needsUpdate;
+            this.object.children.forEach(function(child, i) {
+              child.material.map = texture;
+              child.material.map.needsUpdate = true;
+              child.material.needsUpdate = true;
+              child.needsUpdate = true;
+            });
+          }
+          break;
+        case 'texture-pot1':
+          var num = parseFloat(data.value, 10);
+          this.object.children.forEach(function(child, i) {
+            child.material.map.repeat.x = num;
+            child.material.map.repeat.x = num;
+            child.material.map.needsUpdate = true;
+            child.material.needsUpdate = true;
+            child.needsUpdate = true;
+          });
+          break;
+        case 'lighting-pot1':
+          $V.setLightColor(this.light1, parseFloat(data.value, 10));
+          break;
+        case 'lighting-pot2':
+          $V.setLightColor(this.light2, parseFloat(data.value, 10));
+          break;
+      }
     }
+
+
   };
 
   $V.register(three001);

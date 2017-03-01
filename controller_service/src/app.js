@@ -44,25 +44,6 @@ function pollPot(adcChannel, inputName) {
 	});
 }
 
-/*
-function smoothInput(buffer, value) {
-	var sum = 0;
-    buffer.push(value);
-    if (buffer.length > 10) {
-		buffer.splice(0, 1);
-    }
-	for(var i = 0; i < buffer.length; i++) {
-		sum += buffer[i];
-	}
-	var average = sum / buffer.length;
-
-    return {
-		'buffer' : buffer,
-		'average' : average
-	};
-}
-*/
-
 pollPin(7, "button1");
 pollPin(8, "button2");
 pollPin(10, "up");

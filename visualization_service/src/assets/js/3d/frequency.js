@@ -4,6 +4,10 @@
   var SLICE_WIDTH = 5;
   var GAP = 1;
 
+  var config = {
+    repeatSize: 1//range 1 - 0;
+  };
+
   var three002 = {
     scene: null,
     camera: null,
@@ -14,9 +18,9 @@
     addBars: function() {
       var geometry = new THREE.BoxGeometry(SLICE_WIDTH, SLICE_WIDTH, 25);
       var texture = $V.getTexture();
-      texture.needsUpdate = true;
       texture.repeat.x = 1; //range .2 - 2
       texture.repeat.y = 1; //range .2 - 2
+      texture.needsUpdate = true;
       var material = new THREE.MeshPhongMaterial({
         color: 0xffffff,
         map: texture
@@ -104,9 +108,45 @@
             child.scale.y = val ? val : 0.0001;
           });
           break;
+        case 'input':
+          return this.handleInput(data);
         default:
       }
+    },
 
+    handleInput: function(data) {
+      var input = data.source + '-' + data.name;
+      switch (input) {
+        case 'texture-button1':
+          if (data.value === 1) {
+            var texture = $V.getTexture();
+            texture.repeat.x = texture.repeat.y = config.repeatSize;
+            texture.needsUpdate;
+            this.object.children.forEach(function(child, i) {
+              child.material.map = texture;
+              child.material.map.needsUpdate = true;
+              child.material.needsUpdate = true;
+              child.needsUpdate = true;
+            });
+          }
+          break;
+        case 'texture-pot1':
+          var num = parseFloat(data.value, 10);
+          this.object.children.forEach(function(child, i) {
+            child.material.map.repeat.x = num;
+            child.material.map.repeat.x = num;
+            child.material.map.needsUpdate = true;
+            child.material.needsUpdate = true;
+            child.needsUpdate = true;
+          });
+          break;
+        case 'lighting-pot1':
+          $V.setLightColor(this.light1, parseFloat(data.value, 10));
+          break;
+        case 'lighting-pot2':
+          $V.setLightColor(this.light2, parseFloat(data.value, 10));
+          break;
+      }
     }
   }
 

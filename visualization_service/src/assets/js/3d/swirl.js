@@ -2,6 +2,9 @@
 
   var scene, camera, renderer;
   var GAP = 20;
+  var config = {
+    repeatSize: 1
+  };
 
   var three002 = {
     scene: null,
@@ -19,13 +22,14 @@
 
       for (var i = 0; i < num; i ++ ) {
         var texture = $V.getTexture();
-        var geometry = new THREE.BoxGeometry(10, window.innerHeight, 10);
+        var geometry = new THREE.BoxGeometry(12, 1024, 12);
         var material = new THREE.MeshPhongMaterial({ map: texture, color: 0xffffff });
         var mesh = new THREE.Mesh(geometry, material);
 
+        texture.repeat.y = 8;
+        texture.repeat.x = 1;
         texture.needsUpdate = true;
-        // texture.repeat.x = 20;
-        // texture.repeat.y = 20;
+
         xpos += i === 0 ? xpos : w + increment;
         mesh.position.set(xpos, 1, 10);
 
@@ -73,10 +77,7 @@
       function animate () {
         that.reqId = requestAnimationFrame(animate);
 
-        var time = Date.now() * 0.00005;
-        // that.camera.position.x += that.camera.position.x * 0.05;
-        // that.camera.position.y += that.camera.position.y * 0.05;
-        // that.camera.lookAt(that.scene.position);
+        // var time = Date.now() * 0.00005;
         that.object.children.forEach(function(child, i) {
           child.rotation.y += 0.05;
           child.rotation.x += (0.001 - ((i - 1) / 8000));
@@ -105,9 +106,43 @@
           const newScale = data.volume / Object.keys(data.frequency).length + 1;
           this.object.scale.set(newScale, newScale, newScale);
           break;
+        case 'input':
+          return this.handleInput(data);
         default:
       }
-
+    },
+    handleInput: function(data) {
+      var input = data.source + '-' + data.name;
+      switch (input) {
+        case 'texture-button1':
+          if (data.value === 1) {
+            var texture = $V.getTexture();
+            texture.repeat.x = texture.repeat.y = config.repeatSize;
+            texture.needsUpdate;
+            this.object.children.forEach(function(child, i) {
+              child.material.map = texture;
+              child.material.map.needsUpdate = true;
+              child.material.needsUpdate = true;
+              child.needsUpdate = true;
+            });
+          }
+          break;
+        case 'texture-pot1':
+          var num = parseFloat(data.value, 10);
+          this.object.children.forEach(function(child, i) {
+            child.material.map.repeat.x = num;
+            child.material.map.needsUpdate = true;
+            child.material.needsUpdate = true;
+            child.needsUpdate = true;
+          });
+          break;
+        case 'lighting-pot1':
+          $V.setLightColor(this.light1, parseFloat(data.value, 10));
+          break;
+        case 'lighting-pot2':
+          $V.setLightColor(this.light2, parseFloat(data.value, 10));
+          break;
+      }
     }
   }
 
