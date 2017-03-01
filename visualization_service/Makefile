@@ -1,29 +1,35 @@
 include make_env
 
-.PHONY: build push shell run start stop rm release
+.PHONY: build push shell run start restart stop rm release init
 
 build:
-	docker build --no-cache=true -t $(NS)/$(REPO):$(VERSION) .
+	docker build --no-cache=true -t $(DOCKER_NAMESPACE)/$(DOCKER_REPOSITORY):$(DOCKER_IMAGE_VERSION) .
 
 push:
-	docker push $(NS)/$(REPO):$(VERSION)
+	docker push $(DOCKER_NAMESPACE)/$(DOCKER_REPOSITORY):$(DOCKER_IMAGE_VERSION)
 
 shell:
-	docker run --rm --name $(NAME)-$(INSTANCE) -i -t $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION) /bin/bash
+	docker run --rm --name $(DOCKER_CONTAINER_NAME)-$(DOCKER_INSTANCE) -i -t $(DOCKER_PORTS) $(DOCKER_MAPPED_VOLUMES) $(DOCKER_ENV) $(DOCKER_NAMESPACE)/$(DOCKER_REPOSITORY):$(DOCKER_IMAGE_VERSION) /bin/bash
 
 run:
-	docker run --rm --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION)
+	docker run --rm --name $(DOCKER_CONTAINER_NAME)-$(DOCKER_INSTANCE) $(DOCKER_PORTS) $(DOCKER_MAPPED_VOLUMES) $(DOCKER_ENV) $(DOCKER_NAMESPACE)/$(DOCKER_REPOSITORY):$(DOCKER_IMAGE_VERSION)
 
 start:
-	docker run -d --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION)
+	docker run -d --name $(DOCKER_CONTAINER_NAME)-$(DOCKER_INSTANCE) $(DOCKER_PORTS) $(DOCKER_MAPPED_VOLUMES) $(DOCKER_ENV) $(DOCKER_NAMESPACE)/$(DOCKER_REPOSITORY):$(DOCKER_IMAGE_VERSION)
+
+restart:
+	docker start $(DOCKER_CONTAINER_NAME)-$(DOCKER_INSTANCE)
 
 stop:
-	docker stop $(NAME)-$(INSTANCE)
+	docker stop $(DOCKER_CONTAINER_NAME)-$(DOCKER_INSTANCE)
 
 rm:
-	docker rm $(NAME)-$(INSTANCE)
+	docker rm $(DOCKER_CONTAINER_NAME)-$(DOCKER_INSTANCE)
 
 release: build
-	make push -e VERSION=$(VERSION)
+	make push -e VERSION=$(DOCKER_IMAGE_VERSION)
+
+init:
+	$(info ********** Configure the 'init' command by editing your Makefile. **********)
 
 default: build

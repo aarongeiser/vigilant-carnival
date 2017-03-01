@@ -9,7 +9,7 @@ socket.on("event", function(data) { console.log(data); });
 var rpio = require('rpio');
 rpio.init({gpiomem: false}); /* Use /dev/mem */
 
-// Poll pin
+// Poll GPIO Pins
 function pollPin(gpioPin, inputName) {
   rpio.open(gpioPin, rpio.INPUT, rpio.PULL_UP);
   rpio.poll(gpioPin, function (pin) {
@@ -24,6 +24,7 @@ function pollPin(gpioPin, inputName) {
   });
 }
 
+// Poll Potentiometers
 function pollPot(adcChannel, inputName) {
 	var buffer = 0.00;
 	var pot = mcpadc.open(adcChannel, {speedHz: 1300000}, function (err) {
@@ -44,19 +45,21 @@ function pollPot(adcChannel, inputName) {
 	});
 }
 
-pollPin(7, "button1");
-pollPin(8, "button2");
-pollPin(10, "up");
-pollPin(11, "right");
-pollPin(12, "down");
-pollPin(13, "left");
-
+// Check config for number of potentiometers
 if (process.env.NUM_POTS == 2) {
 	pollPot(0, "pot1");
 	pollPot(1, "pot2");
 } else {
 	pollPot(0, "pot1");
 }
+
+// Poll button states
+pollPin(7, "button1");
+pollPin(8, "button2");
+pollPin(10, "up");
+pollPin(11, "right");
+pollPin(12, "down");
+pollPin(13, "left");
 
 // Initial console log
 console.log('Running...');
