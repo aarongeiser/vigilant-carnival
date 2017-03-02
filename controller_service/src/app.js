@@ -56,10 +56,10 @@ if (process.env.NUM_POTS == 2) {
 // Poll button states
 pollPin(7, "button1");
 pollPin(8, "button2");
-pollPin(10, "up");
+pollPin(10, "left");
 pollPin(11, "right");
-pollPin(12, "down");
-pollPin(13, "left");
+pollPin(12, "up");
+pollPin(13, "down");
 
 // Initial console log
 console.log('Running...');
