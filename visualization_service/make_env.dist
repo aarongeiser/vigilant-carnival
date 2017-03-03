@@ -7,3 +7,14 @@ PORTS = -p 3002:3002
 VOLUMES = -v $(shell pwd)/src:/src
 ENV = \
   -e NODE_ENV=development
+
+
+DOCKER_NAMESPACE = sinocalliopteryx
+DOCKER_IMAGE_VERSION ?= latest
+DOCKER_REPOSITORY = visualization-service
+DOCKER_CONTAINER_NAME = visualization-service
+DOCKER_INSTANCE = 1
+DOCKER_PORTS = -p 3002:3002
+DOCKER_MAPPED_VOLUMES = -v $(shell pwd)/src:/src
+DOCKER_ENV = \
+	-e NODE_ENV=development \

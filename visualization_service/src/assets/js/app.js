@@ -7,8 +7,8 @@
   var currentTexture = 0;
 
   var textures = [
-    '/assets/diamonds.png',
     '/assets/stripes.png',
+    '/assets/diamonds.png',
     '/assets/hex.png'
   ];
 
