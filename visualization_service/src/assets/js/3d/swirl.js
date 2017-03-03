@@ -6,6 +6,13 @@
     repeatSize: 1
   };
 
+  var currentGeometry = 0;
+  var geoms = [
+    new THREE.BoxGeometry(12, 1024, 12),
+    new THREE.ConeGeometry(12, 512, 8),
+    new THREE.CylinderGeometry(12, 12, 512, 6)
+  ];
+
   var three002 = {
     scene: null,
     camera: null,
@@ -20,21 +27,24 @@
       var num = 128;
       var w = (window.innerWidth - (128 * increment)) / num;
 
+      this.object = new THREE.Object3D();
+
       for (var i = 0; i < num; i ++ ) {
-        var texture = $V.getTexture();
-        var geometry = new THREE.BoxGeometry(12, 1024, 12);
-        var material = new THREE.MeshPhongMaterial({ map: texture, color: 0xffffff });
+        var geometry = geoms[currentGeometry];
+        var material = new THREE.MeshPhongMaterial({ map: this.texture, color: 0xffffff });
         var mesh = new THREE.Mesh(geometry, material);
 
-        texture.repeat.y = 8;
-        texture.repeat.x = 1;
-        texture.needsUpdate = true;
+        this.texture.repeat.y = 8;
+        this.texture.repeat.x = 1;
+        this.texture.needsUpdate = true;
 
         xpos += i === 0 ? xpos : w + increment;
         mesh.position.set(xpos, 1, 10);
 
         this.object.add( mesh );
       }
+
+      this.scene.add(this.object);
     },
     init: function () {
       this.renderer = new THREE.WebGLRenderer({antialias: true, canvas: document.getElementById('audioCanvas') });
@@ -47,10 +57,7 @@
       this.scene = new THREE.Scene();
       this.scene.fog = new THREE.Fog( 0x000000, 1, 800 );
 
-      this.object = new THREE.Object3D();
-
-      this.scene.add(this.object);
-
+      this.texture = $V.getTexture();
       this.addBars();
 
       this.scene.add(new THREE.AmbientLight(0x999999));
@@ -77,16 +84,15 @@
       function animate () {
         that.reqId = requestAnimationFrame(animate);
 
-        // var time = Date.now() * 0.00005;
-        that.object.children.forEach(function(child, i) {
-          child.rotation.y += 0.05;
-          child.rotation.x += (0.001 - ((i - 1) / 8000));
+        $V.rotateObject(that.object, function() {
+          that.object.children.forEach(function(child, i) {
+            child.rotation.y += 0.05;
+            child.rotation.x += (0.001 - ((i - 1) / 8000));
+          });
+          that.object.rotation.y -= 0.005;
+          that.object.rotation.x += 0.005;
+          that.object.rotation.z -= 0.01;
         });
-
-        that.object.rotation.y -= 0.005;
-        that.object.rotation.x += 0.005;
-        that.object.rotation.z -= 0.015;
-
 
         that.composer.render(0.1);
       }
@@ -113,12 +119,16 @@
     },
     handleInput: function(data) {
       var input = data.source + '-' + data.name;
+      if (data.source === 'rotation') {
+        return $V.handleRotation(data);
+      }
       switch (input) {
         case 'texture-button1':
           if (data.value === 1) {
-            var texture = $V.getTexture();
-            texture.repeat.x = texture.repeat.y = config.repeatSize;
-            texture.needsUpdate;
+            this.texture = $V.getTexture();
+            this.texture.repeat.y = 8;
+            this.texture.repeat.x = 1;
+            this.texture.needsUpdate;
             this.object.children.forEach(function(child, i) {
               child.material.map = texture;
               child.material.map.needsUpdate = true;
@@ -142,7 +152,22 @@
         case 'lighting-pot2':
           $V.setLightColor(this.light2, parseFloat(data.value, 10));
           break;
+        case 'geometry-button1':
+          this.cycleGeometry(data);
+          break;
       }
+    },
+
+    cycleGeometry: function(data) {
+      if (data.value === 0) {
+        currentGeometry++;
+        if (currentGeometry >= geoms.length) {
+          currentGeometry = 0;
+        }
+        this.scene.remove(this.object);
+        this.addBars();
+      }
+
     }
   }
 

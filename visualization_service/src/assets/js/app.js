@@ -8,8 +8,8 @@
 
   var textures = [
     '/assets/diamonds.png',
-    '/assets/hex.png',
-    '/assets/stripes.png'
+    '/assets/stripes.png',
+    '/assets/hex.png'
   ];
 
   /**
@@ -142,6 +142,41 @@
 
     setLightColor: function (light, hue) {
       light.color.setHex('0x' + this.hslToRgb(hue).split('#')[1]);
+    },
+
+    rotation: {
+      values: {
+        up: 1,
+        down: 1,
+        left: 1,
+        right: 1,
+      },
+      isSet: false
+    },
+
+    handleRotation: function(data) {
+      this.rotation.values[data.name] = data.value;
+      this.rotation.isSet = Object.keys(this.rotation.values).find(val => this.rotation.values[val] === 0);
+      return this.rotation;
+    },
+
+    rotateObject: function(obj, defaultRotation) {
+      if (this.rotation.isSet) {
+        if (this.rotation.values.up === 0) {
+          obj.rotation.x += 0.025;
+        }
+        if (this.rotation.values.down === 0) {
+          obj.rotation.x -= 0.025;
+        }
+        if (this.rotation.values.left === 0) {
+          obj.rotation.y -= 0.025;
+        }
+        if (this.rotation.values.right === 0) {
+          obj.rotation.y += 0.025;
+        }
+      } else {
+        defaultRotation();
+      }
     },
 
     init: function () {

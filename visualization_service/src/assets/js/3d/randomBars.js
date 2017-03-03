@@ -4,6 +4,13 @@
     repeatSize: 1
   };
 
+  var currentGeometry = 0;
+  var geoms = [
+    new THREE.BoxGeometry( 500, 10, 10 ),
+    new THREE.ConeGeometry( 50, 250, 6),
+    new THREE.CylinderGeometry(10, 10, 300, 3, false)
+  ];
+
   var three001 = {
     camera: null,
     scene: null,
@@ -11,6 +18,28 @@
     composer: null,
     object: null,
     light: null,
+    addBars: function() {
+      this.object = new THREE.Object3D();
+
+      this.texture.repeat.x = this.texture.repeat.y = config.repeatSize;
+      this.texture.needsUpdate = true;
+
+      var geometry = geoms[currentGeometry];
+      var material = new THREE.MeshPhongMaterial( {
+        map: this.texture
+      });
+
+      for ( var i = 0; i < 50; i ++ ) {
+
+        var mesh = new THREE.Mesh( geometry, material );
+        mesh.position.set( Math.random() - 0.2, Math.random() - 0.2, Math.random() - 0.2 ).normalize();
+        mesh.position.multiplyScalar( Math.random() * 400 );
+        mesh.rotation.set( Math.random() * 2, Math.random() * 2, Math.random() * 2 );
+        this.object.add( mesh );
+      }
+
+      this.scene.add( this.object );
+    },
     init: function () {
 
       this.renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('audioCanvas') });
@@ -23,31 +52,9 @@
       this.scene = new THREE.Scene();
       this.scene.fog = new THREE.Fog( 0x000000, 1, 1000 );
 
-      this.object = new THREE.Object3D();
-      this.scene.add( this.object );
-
-      var texture = $V.getTexture();
-
-      texture.wrapS = THREE.RepeatWrapping;
-      texture.wrapT = THREE.RepeatWrapping;
-      texture.repeat.x = texture.repeat.y = config.repeatSize;
-      texture.needsUpdate = true;
-
-      var geometry = new THREE.BoxGeometry( 500, 10, 10 );
-      var material = new THREE.MeshPhongMaterial( {
-        map: texture
-      });
-
-      for ( var i = 0; i < 50; i ++ ) {
-
-        var mesh = new THREE.Mesh( geometry, material );
-        mesh.position.set( Math.random() - 0.2, Math.random() - 0.2, Math.random() - 0.2 ).normalize();
-        mesh.position.multiplyScalar( Math.random() * 400 );
-        mesh.rotation.set( Math.random() * 2, Math.random() * 2, Math.random() * 2 );
-        this.object.add( mesh );
-
-      }
-
+      this.texture = $V.getTexture();
+      this.addBars();
+      
       this.scene.add(new THREE.AmbientLight(0x999999));
 
       this.light1 = new THREE.DirectionalLight($V.hslToRgb(.01));
@@ -79,12 +86,15 @@
 
       function animate () {
         that.reqId = requestAnimationFrame(animate);
-        that.object.rotation.x += 0.01;
-        // that.object.rotation.y -= 0.01;
-        that.object.children.forEach(function(child, i) {
-          child.rotation.x += 0.01;
-          child.rotation.y -= 0.01;
-          child.rotation.z += 0.01;
+
+        $V.rotateObject(that.object, function() {
+          that.object.rotation.x += 0.01;
+          // that.object.rotation.y -= 0.01;
+          that.object.children.forEach(function(child, i) {
+            child.rotation.x += 0.01;
+            child.rotation.y -= 0.01;
+            child.rotation.z += 0.01;
+          });
         });
         that.composer.render(0.1);
 
@@ -114,14 +124,17 @@
 
     handleInput: function(data) {
       var input = data.source + '-' + data.name;
+      if (data.source === 'rotation') {
+        return $V.handleRotation(data);
+      }
       switch (input) {
         case 'texture-button1':
           if (data.value === 1) {
-            var texture = $V.getTexture();
-            texture.repeat.x = texture.repeat.y = config.repeatSize;
-            texture.needsUpdate;
+            this.texture = $V.getTexture();
+            this.texture.repeat.x = this.texture.repeat.y = config.repeatSize;
+            this.texture.needsUpdate;
             this.object.children.forEach(function(child, i) {
-              child.material.map = texture;
+              child.material.map = this.texture;
               child.material.map.needsUpdate = true;
               child.material.needsUpdate = true;
               child.needsUpdate = true;
@@ -144,7 +157,22 @@
         case 'lighting-pot2':
           $V.setLightColor(this.light2, parseFloat(data.value, 10));
           break;
+        case 'geometry-button1':
+          this.cycleGeometry(data);
+          break;
       }
+    },
+
+    cycleGeometry: function(data) {
+      if (data.value === 0) {
+        currentGeometry++;
+        if (currentGeometry >= geoms.length) {
+          currentGeometry = 0;
+        }
+        this.scene.remove(this.object);
+        this.addBars();
+      }
+
     }
 
 

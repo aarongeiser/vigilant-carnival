@@ -1,6 +1,7 @@
 (function($V) {
 
   var camera, scene, texture, plane, renderer, W, H, defaultVertices, hemiLight, planeMaterial;
+
   var config = {
     variance: {
       x: 0.8,
@@ -61,14 +62,13 @@
     },
 
     createPlane: function () {
-      var texture = $V.getTexture();
       var planeGeometry = new THREE.PlaneGeometry(80, 80, config.planeDefinition, config.planeDefinition);
       planeMaterial = new THREE.MeshLambertMaterial({
-        map: texture,
+        map: this.texture,
         side: THREE.DoubleSide
       });
-      texture.repeat.x = texture.repeat.y = config.repeatSize;
-      texture.needsUpdate = true;
+      this.texture.repeat.x = this.texture.repeat.y = config.repeatSize;
+      this.texture.needsUpdate = true;
 
       plane = new THREE.Mesh(planeGeometry, planeMaterial);
       defaultVertices = plane.geometry.clone().vertices;
@@ -117,7 +117,7 @@
       scene = new THREE.Scene();
       W = window.innerWidth;
       H = window.innerHeight;
-
+      this.texture = $V.getTexture();
       this.createCamera();
       this.createLights();
       this.createPlane();
@@ -132,8 +132,11 @@
       function animate () {
         that.reqId = requestAnimationFrame(animate);
 
-        plane.rotation.x -= 0.01;
-        plane.rotation.z -= 0.01;
+        $V.rotateObject(plane, function() {
+          plane.rotation.x -= 0.001;
+          plane.rotation.z -= 0.001;
+        });
+
         hemiLight.position.z += 0.01;
         hemiLight.position.x -= 0.01;
 
@@ -167,15 +170,17 @@
     },
 
     handleInput: function(data) {
-      console.log(data);
       var input = data.source + '-' + data.name;
+      if (data.source === 'rotation') {
+        return $V.handleRotation(data);
+      }
       switch (input) {
         case 'texture-button1':
           if (data.value === 1) {
-            var texture = $V.getTexture();
-            texture.repeat.x = texture.repeat.y = config.repeatSize;
-            texture.needsUpdate;
-            plane.material.map = texture;
+            this.texture = $V.getTexture();
+            this.texture.repeat.x = this.texture.repeat.y = config.repeatSize;
+            this.texture.needsUpdate;
+            plane.material.map = this.texture;
             plane.material.map.needsUpdate = true;
             plane.material.needsUpdate = true;
             plane.needsUpdate = true;
@@ -196,6 +201,14 @@
           break;
         case 'lighting-pot2':
           $V.setLightColor(this.light2, parseFloat(data.value, 10));
+          break;
+        case 'geometry-button1':
+          if (data.value === 0) {
+            scene.remove(plane);
+            this.createPlane();
+            this.updatePlane();
+            this.render();
+          }
           break;
       }
     }
