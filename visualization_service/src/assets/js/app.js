@@ -7,9 +7,15 @@
   var currentTexture = 0;
 
   var textures = [
-    '/assets/stripes.png',
-    '/assets/diamonds.png',
-    '/assets/hex.png'
+    '/assets/textures/patterns-01.png',
+    '/assets/textures/patterns-02.png',
+    // '/assets/textures/patterns-03.png',
+    // '/assets/textures/patterns-04.png'
+    '/assets/textures/patterns-05.png',
+    '/assets/textures/patterns-06.png',
+    '/assets/textures/patterns-07.png',
+    '/assets/textures/patterns-08.png',
+    '/assets/textures/patterns-09.png'
   ];
 
   /**
@@ -24,33 +30,6 @@
   var VIZ = {
     register: function(visualization) {
       visualizations.push(visualization);
-    },
-
-    advance: function() {
-      var len = visualizations.length;
-      if (this.timeout) {
-        clearTimeout(this.timeout);
-      }
-      if (currentVizualization) {
-        currentVizualization.destroy();
-      }
-      position = position + 1 >= len ? 0 : ++position;
-      currentVizualization = visualizations[position];
-      currentVizualization.play();
-
-    },
-
-    autoAdvance: function() {
-      var that = this;
-      var len = visualizations.length;
-      if (len < 2) { return; }
-      this.timeout = setTimeout(function () {
-        clearTimeout(that.timeout);
-        currentVizualization.destroy();
-        that.resetCanvas();
-        position = position + 1 >= len ? 0 : ++position;
-        that.play();
-      }, duration);
     },
 
     resetCanvas: function() {
@@ -98,7 +77,8 @@
         texture.needsUpdate = true;
         image.onload = function() {
           loadedTextures++;
-          if (loadedTextures >= textures.length) {
+          console.log(loadedTextures.length);
+          if (loadedTextures == textures.length) {
             cb.call(that);
           }
         }
@@ -118,11 +98,20 @@
       if (visualizations.length) {
         currentVizualization = visualizations[position];
         currentVizualization.play();
-        this.autoAdvance();
       }
     },
 
+    advance: function() {
+      var len = visualizations.length;
+      if (currentVizualization) {
+        currentVizualization.destroy();
+      }
+      position = position + 1 >= len ? 0 : ++position;
+      this.play();
+    },
+
     connect: function() {
+      var that = this;
       socket = io('http://localhost:3001/viz');
       socket.on('connect', () => {
         socket.on('audio', function(data) {
@@ -133,6 +122,9 @@
         socket.on('down', function(data) {
           currentVizualization.receive('down', data);
         });
+        socket.on('switch', function(data) {
+          that.advance();
+        })
         console.log('connected');
       });
       socket.on('input', data => {

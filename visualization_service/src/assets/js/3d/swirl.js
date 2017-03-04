@@ -8,9 +8,9 @@
 
   var currentGeometry = 0;
   var geoms = [
-    new THREE.BoxGeometry(12, 1024, 12),
-    new THREE.ConeGeometry(12, 512, 8),
-    new THREE.CylinderGeometry(12, 12, 512, 6)
+    new THREE.BoxGeometry(10, 1024, 10),
+    new THREE.ConeGeometry(16, 512, 8),
+    new THREE.CylinderGeometry(10, 10, 512, 6)
   ];
 
   var three002 = {
@@ -86,12 +86,12 @@
 
         $V.rotateObject(that.object, function() {
           that.object.children.forEach(function(child, i) {
-            child.rotation.y += 0.05;
+            child.rotation.y += 0.001;
             child.rotation.x += (0.001 - ((i - 1) / 8000));
           });
-          that.object.rotation.y -= 0.005;
-          that.object.rotation.x += 0.005;
-          that.object.rotation.z -= 0.01;
+          that.object.rotation.y -= 0.001;
+          that.object.rotation.x += 0.001;
+          that.object.rotation.z -= 0.001;
         });
 
         that.composer.render(0.1);
@@ -119,6 +119,7 @@
     },
     handleInput: function(data) {
       var input = data.source + '-' + data.name;
+      var that = this;
       if (data.source === 'rotation') {
         return $V.handleRotation(data);
       }
@@ -128,9 +129,9 @@
             this.texture = $V.getTexture();
             this.texture.repeat.y = 8;
             this.texture.repeat.x = 1;
-            this.texture.needsUpdate;
+            this.texture.needsUpdate = true;
             this.object.children.forEach(function(child, i) {
-              child.material.map = texture;
+              child.material.map = that.texture;
               child.material.map.needsUpdate = true;
               child.material.needsUpdate = true;
               child.needsUpdate = true;

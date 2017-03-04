@@ -22,7 +22,6 @@
       this.object = new THREE.Object3D();
 
       this.texture.repeat.x = this.texture.repeat.y = config.repeatSize;
-      this.texture.needsUpdate = true;
 
       var geometry = geoms[currentGeometry];
       var material = new THREE.MeshPhongMaterial( {
@@ -54,7 +53,7 @@
 
       this.texture = $V.getTexture();
       this.addBars();
-      
+
       this.scene.add(new THREE.AmbientLight(0x999999));
 
       this.light1 = new THREE.DirectionalLight($V.hslToRgb(.01));
@@ -124,6 +123,7 @@
 
     handleInput: function(data) {
       var input = data.source + '-' + data.name;
+      var that = this;
       if (data.source === 'rotation') {
         return $V.handleRotation(data);
       }
@@ -134,7 +134,7 @@
             this.texture.repeat.x = this.texture.repeat.y = config.repeatSize;
             this.texture.needsUpdate;
             this.object.children.forEach(function(child, i) {
-              child.material.map = this.texture;
+              child.material.map = that.texture;
               child.material.map.needsUpdate = true;
               child.material.needsUpdate = true;
               child.needsUpdate = true;

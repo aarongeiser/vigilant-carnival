@@ -5,6 +5,7 @@ const serveStatic = require('serve-static');
 
 const PORT = 3001;
 const VISUALIZERS = 'visualizers';
+const VISUALIZATION_DURATION = 60000;
 
 const server = http.createServer(app);
 
@@ -33,6 +34,9 @@ const dist = io.of('/distributor');
 dist.max_connections = 1;
 dist.current_connections = 0;
 dist.on('connection', function (d) {
+
+  let timeout = null;
+
   if (this.current_connections >= this.max_connections) {
     dist.emit('disconnect', 'I\'m sorry, too many connections');
     d.disconnect();
@@ -46,8 +50,22 @@ dist.on('connection', function (d) {
     d.on('disconnect', d => {
       viz.emit('down');
       this.current_connections--;
+      clearTimeout(timeout);
     });
   }
+
+  const autoAdvance = function() {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      if (Object.keys(viz.sockets).length) {
+        viz.emit('switch');
+      }
+      autoAdvance();
+    }, VISUALIZATION_DURATION);
+  }
+
+  autoAdvance();
+
 });
 
 server.listen(PORT, () => {

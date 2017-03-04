@@ -119,6 +119,7 @@
 
     handleInput: function(data) {
       var input = data.source + '-' + data.name;
+      var that = this;
       if (data.source === 'rotation') {
         return $V.handleRotation(data);
       }
@@ -129,7 +130,7 @@
             this.texture.repeat.x = this.texture.repeat.y = config.repeatSize;
             this.texture.needsUpdate;
             this.object.children.forEach(function(child, i) {
-              child.material.map = this.texture;
+              child.material.map = that.texture;
               child.material.map.needsUpdate = true;
               child.material.needsUpdate = true;
               child.needsUpdate = true;

@@ -1,6 +1,7 @@
 (function($V) {
 
-  var camera, scene, texture, plane, renderer, W, H, defaultVertices, hemiLight, planeMaterial;
+  var camera, scene, texture, plane, renderer;
+  var composer, W, H, defaultVertices, hemiLight, planeMaterial;
 
   var config = {
     variance: {
@@ -8,8 +9,7 @@
       y: 0.8,
       z: 8,
     },
-    speed: 10,
-    planeSize: 80,
+    planeSize: 40,
     planeDefinition: 8,
     repeatSize: 20
   };
@@ -22,23 +22,6 @@
     return min + (Math.random() * (max - min + 1));
   }
 
-
-  // window.expandTexture = function(size) {
-  //   var texture = $V.getTexture();
-  //
-  //   console.log(texture);
-  //   plane.material.map = texture;
-  //   plane.material.map.needsUpdate = true;
-  //   plane.material.needsUpdate = true;
-  //   plane.needsUpdate = true;
-  //   // planeMaterial.map = texture;
-  //   // if (size) {
-  //   //   texture.repeat.x = texture.repeat.y = size;
-  //   // }
-  //
-  // }
-
-
   var three003 = {
 
     createCamera: function() {
@@ -48,21 +31,21 @@
     },
 
     createLights: function() {
-      hemiLight = new THREE.HemisphereLight( 0x000000, 0xffffff, 0.7);
+      hemiLight = new THREE.HemisphereLight( 0x000000, 0xffffff, 0.8);
       hemiLight.castshadow = true;
       scene.add(hemiLight);
 
-      this.light1 = new THREE.PointLight($V.hslToRgb(1), 10, 100, 2);
+      this.light1 = new THREE.PointLight($V.hslToRgb(.3), 10, 60, 2);
       this.light1.position.set(1, 20, 1);
       scene.add(this.light1);
 
-      this.light2 = new THREE.PointLight($V.hslToRgb(.6), 10, 100, 2);
+      this.light2 = new THREE.PointLight($V.hslToRgb(.6), 10, 60  , 2);
       this.light2.position.set(1, -20, 1);
       scene.add(this.light2);
     },
 
     createPlane: function () {
-      var planeGeometry = new THREE.PlaneGeometry(80, 80, config.planeDefinition, config.planeDefinition);
+      var planeGeometry = new THREE.PlaneGeometry(config.planeSize, config.planeSize, config.planeDefinition, config.planeDefinition);
       planeMaterial = new THREE.MeshLambertMaterial({
         map: this.texture,
         side: THREE.DoubleSide
@@ -121,8 +104,16 @@
       this.createCamera();
       this.createLights();
       this.createPlane();
-      this.resize();
       this.updatePlane();
+      this.resize();
+
+      composer = new THREE.EffectComposer(renderer);
+      const copyPass = new THREE.ShaderPass(THREE.CopyShader);
+      const renderPass = new THREE.RenderPass(this.scene, this.camera);
+
+      composer.addPass(renderPass);
+      composer.addPass(copyPass);
+      copyPass.renderToScreen = true;
     },
 
     play: function () {
@@ -140,7 +131,7 @@
         hemiLight.position.z += 0.01;
         hemiLight.position.x -= 0.01;
 
-        renderer.render(scene, camera);
+        composer.render(0.1);
       }
 
       this.reqId = requestAnimationFrame(animate);
@@ -153,20 +144,23 @@
     },
 
     receive: function(event, data) {
+      const modifier = (data.volume / Object.keys(data.frequency).length);
       switch (event) {
         case 'audio':
           plane.geometry.vertices.map(function(v, i) {
-            const val = defaultVertices[i].z * (data.volume / Object.keys(data.frequency).length);
+            const val = defaultVertices[i].z * modifier;
             v.z = val * 2;
             return v;
           });
+          this.render();
           break;
         case 'input':
-          return this.handleInput(data);
+          this.handleInput(data);
+          return this.render();
         default:
       }
 
-      this.render();
+
     },
 
     handleInput: function(data) {

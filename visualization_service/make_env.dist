@@ -1,14 +1,3 @@
-NS = sinocalliopteryx
-VERSION ?= latest
-REPO = visualization-service
-NAME = visualization-service
-INSTANCE = visualization-service
-PORTS = -p 3002:3002
-VOLUMES = -v $(shell pwd)/src:/src
-ENV = \
-  -e NODE_ENV=development
-
-
 DOCKER_NAMESPACE = sinocalliopteryx
 DOCKER_IMAGE_VERSION ?= latest
 DOCKER_REPOSITORY = visualization-service
