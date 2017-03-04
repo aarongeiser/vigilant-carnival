@@ -5,7 +5,7 @@
   "description": "Node.js App for Raspberry Pi Control Panel",
   "author": "Aaron Geiser",
   "scripts": {
-    "start:app": "./node_modules/nodemon/bin/nodemon.js --legacy-watch app.js"
+    "start": "./node_modules/nodemon/bin/nodemon.js --legacy-watch app.js"
   },
   "dependencies": {
     "socket.io": "1.7.2",
