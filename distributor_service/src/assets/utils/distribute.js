@@ -22,14 +22,14 @@ window.onload = () => {
         return values / array.length;
       }
       function distribute() {
-        requestAnimationFrame(distribute);
         const bufferLength = audio.analyser.frequencyBinCount;
         const dataArray = new Uint8Array(bufferLength);
         audio.analyser.getByteFrequencyData(dataArray);
         socket.emit('audio', { frequency: dataArray, volume: getAverageVolume(dataArray) });
+        requestAnimationFrame(distribute);
       }
 
-      distribute();
+      window.requestAnimationFrame(distribute);
     });
   });
 
