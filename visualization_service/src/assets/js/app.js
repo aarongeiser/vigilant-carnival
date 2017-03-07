@@ -114,7 +114,9 @@
       var that = this;
       socket = io('http://localhost:3001/viz');
       socket.on('connect', () => {
+        console.log('connected');
         socket.on('audio', function(data) {
+          console.log({currentVizualization});
           if (currentVizualization) {
             currentVizualization.receive('audio', data);
           }
@@ -124,12 +126,13 @@
         });
         socket.on('switch', function(data) {
           that.advance();
-        })
-        console.log('connected');
+        });
       });
+
       socket.on('input', data => {
         currentVizualization.receive('input', data);
       });
+
     },
 
     setLightColor: function (light, hue) {

@@ -25,7 +25,6 @@ inputs.on('connection', client => {
   console.log("I have an input...");
   client.emit('event', { message: "You are now connected!" })
   client.on('input', data => {
-    console.log(data);
     viz.emit('input', data);
   });
 });
@@ -44,6 +43,7 @@ dist.on('connection', function (d) {
     this.current_connections++;
 
     d.on('audio', data => {
+      console.log('I have audio');
       viz.emit('audio', data);
     });
 
