@@ -86,7 +86,7 @@
 
         $V.rotateObject(that.object, function() {
           that.object.children.forEach(function(child, i) {
-            child.rotation.y += 0.001;
+            child.rotation.y += 0.05;
             child.rotation.x += (0.001 - ((i - 1) / 8000));
           });
           that.object.rotation.y -= 0.001;

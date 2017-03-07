@@ -9,7 +9,7 @@
       y: 0.8,
       z: 8,
     },
-    planeSize: 40,
+    planeSize: 50,
     planeDefinition: 8,
     repeatSize: 20
   };
@@ -109,7 +109,7 @@
 
       composer = new THREE.EffectComposer(renderer);
       const copyPass = new THREE.ShaderPass(THREE.CopyShader);
-      const renderPass = new THREE.RenderPass(this.scene, this.camera);
+      const renderPass = new THREE.RenderPass(scene, camera);
 
       composer.addPass(renderPass);
       composer.addPass(copyPass);
@@ -144,9 +144,9 @@
     },
 
     receive: function(event, data) {
-      const modifier = (data.volume / Object.keys(data.frequency).length);
       switch (event) {
         case 'audio':
+          const modifier = (data.volume / Object.keys(data.frequency).length);
           plane.geometry.vertices.map(function(v, i) {
             const val = defaultVertices[i].z * modifier;
             v.z = val * 2;
@@ -159,8 +159,6 @@
           return this.render();
         default:
       }
-
-
     },
 
     handleInput: function(data) {
