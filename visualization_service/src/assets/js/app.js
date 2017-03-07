@@ -112,7 +112,7 @@
 
     connect: function() {
       var that = this;
-      socket = io('http://localhost:3001/viz');
+      socket = io('http://tx-viz-dist:3001/viz');
       socket.on('connect', () => {
         console.log('connected');
         socket.on('audio', function(data) {
