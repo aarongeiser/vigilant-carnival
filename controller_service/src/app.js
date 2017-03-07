@@ -8,49 +8,57 @@ socket.on("event", function(data) { console.log(data); });
 // GPIO Setup
 var rpio = require('rpio');
 rpio.init({gpiomem: false}); /* Use /dev/mem */
+rpio.open(3, rpio.OUTPUT, rpio.LOW);
+
+// Flash LED
+function flashLed() {
+    rpio.write(3, rpio.HIGH);
+}
 
 // Poll GPIO Pins
 function pollPin(gpioPin, inputName) {
-  rpio.open(gpioPin, rpio.INPUT, rpio.PULL_UP);
-  rpio.poll(gpioPin, function (pin) {
-    var value = rpio.read(pin);
-    var state = value ? 'released' : 'pressed';
-    console.log('Button event on P%d (button currently %s)', pin, state);
-    socket.emit('input', {
-      'name': inputName,
-      'source': process.env.CONTROLLER_NAME,
-      'value': value
+    rpio.open(gpioPin, rpio.INPUT, rpio.PULL_DOWN);
+    rpio.poll(gpioPin, function (pin) {
+        var value = rpio.read(pin);
+        var state = value ? 'released' : 'pressed';
+        console.log('Button event on P%d (button currently %s)', pin, state);
+        socket.emit('input', {
+            'name': inputName,
+            'source': process.env.CONTROLLER_NAME,
+            'value': value
+        });
+        flashLed();
     });
-  });
 }
 
 // Poll Potentiometers
 function pollPot(adcChannel, inputName) {
-	var buffer = 0.00;
-	var pot = mcpadc.open(adcChannel, {speedHz: 1300000}, function (err) {
-		setInterval(function () {
-			pot.read(function (err, reading) {
-				var value = reading.value.toFixed(2);
-				if (value != buffer) {
-					console.log('Pot value: %d', value);
-					socket.emit('input', {
-						'name': inputName,
-						'source': process.env.CONTROLLER_NAME,
-						'value': value
-					});
-					buffer = value;
-				}
-			});
-		}, 30);
-	});
+    var buffer = 0.00;
+    var pot = mcpadc.open(adcChannel, {speedHz: 1300000}, function (err) {
+        setInterval(function () {
+            pot.read(function (err, reading) {
+                var value = reading.value.toFixed(2);
+                if (value != buffer) {
+                    console.log('Pot value: %d', value);
+                    socket.emit('input', {
+                        'name': inputName,
+                        'source': process.env.CONTROLLER_NAME,
+                        'value': value
+                    });
+                    flashLed();
+                    buffer = value;
+                }
+            });
+        }, 30);
+    });
 }
 
 // Check config for number of potentiometers
 if (process.env.NUM_POTS == 2) {
-	pollPot(0, "pot1");
-	pollPot(1, "pot2");
+    pollPot(0, "pot1");
+    pollPot(1, "pot2");
 } else {
-	pollPot(0, "pot1");
+    pollPot(0, "pot1");
 }
 
 // Poll button states
