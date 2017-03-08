@@ -1,16 +1,16 @@
 (function() {
 
   var visualizations = [];
-  var duration = 60000;
   var position = 0;
   var currentVizualization = null;
   var currentTexture = 0;
+  var connectionUrl = 'http://localhost:3001/viz';
 
   var textures = [
     '/assets/textures/patterns-01.png',
     '/assets/textures/patterns-02.png',
-    // '/assets/textures/patterns-03.png',
-    // '/assets/textures/patterns-04.png'
+    // '/assets/textures/patterns-03.png', ??
+    '/assets/textures/patterns-04.png',
     '/assets/textures/patterns-05.png',
     '/assets/textures/patterns-06.png',
     '/assets/textures/patterns-07.png',
@@ -18,26 +18,9 @@
     '/assets/textures/patterns-09.png'
   ];
 
-  /**
-   * Visualizations will require " destroy, play, and receive" methods
-   *
-   *  destroy: removes all aspects of the current visualization
-   *  play: will trigger an animation loop
-   *  receive: a means for getting real-time data to the visualization
-   *
-   */
-
   var VIZ = {
-    register: function(visualization) {
-      visualizations.push(visualization);
-    },
-
-    resetCanvas: function() {
-      var id = 'audioCanvas';
-      var curr = document.getElementById(id);
-      var reset = document.createElement('canvas');
-      reset.id = id;
-      curr.replaceWith(reset);
+    register: function(viz) {
+      visualizations.push(viz);
     },
 
     hslToRgb: function(h, s = 1, l = 0.5) {
@@ -77,7 +60,6 @@
         texture.needsUpdate = true;
         image.onload = function() {
           loadedTextures++;
-          console.log(loadedTextures.length);
           if (loadedTextures == textures.length) {
             cb.call(that);
           }
@@ -112,11 +94,10 @@
 
     connect: function() {
       var that = this;
-      socket = io('http://tx-viz-dist:3001/viz');
+      socket = io(connectionUrl);
       socket.on('connect', () => {
         console.log('connected');
         socket.on('audio', function(data) {
-          console.log({currentVizualization});
           if (currentVizualization) {
             currentVizualization.receive('audio', data);
           }
@@ -124,7 +105,7 @@
         socket.on('down', function(data) {
           currentVizualization.receive('down', data);
         });
-        socket.on('switch', function(data) {
+        socket.on('switch', function() {
           that.advance();
         });
       });
@@ -132,7 +113,6 @@
       socket.on('input', data => {
         currentVizualization.receive('input', data);
       });
-
     },
 
     setLightColor: function (light, hue) {

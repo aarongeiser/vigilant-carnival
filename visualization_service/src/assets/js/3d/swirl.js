@@ -1,7 +1,5 @@
 (function($V) {
 
-  var scene, camera, renderer;
-  var GAP = 20;
   var config = {
     repeatSize: 1
   };
@@ -23,9 +21,9 @@
     addBars: function() {
 
       var xpos = -(window.innerWidth / 4);
-      var increment = GAP;
-      var num = 128;
-      var w = (window.innerWidth - (128 * increment)) / num;
+      var increment = 20;
+      var num = 64;
+      var w = (window.innerWidth - (64 * increment)) / num;
 
       this.object = new THREE.Object3D();
 
@@ -62,11 +60,11 @@
 
       this.scene.add(new THREE.AmbientLight(0x999999));
 
-      this.light1 = new THREE.DirectionalLight($V.hslToRgb(.2));
+      this.light1 = new THREE.DirectionalLight($V.hslToRgb(.3));
       this.light1.position.set(20, 1, 1);
       this.scene.add(this.light1);
 
-      this.light2 = new THREE.DirectionalLight($V.hslToRgb(.8));
+      this.light2 = new THREE.DirectionalLight($V.hslToRgb(.6));
       this.light2.position.set(-20, 1, 1);
       this.scene.add(this.light2);
 
@@ -76,6 +74,7 @@
       this.composer.addPass(renderPass);
       this.composer.addPass(copyPass);
       copyPass.renderToScreen = true;
+
     },
     play: function () {
       this.init();
@@ -105,18 +104,22 @@
         window.cancelAnimationFrame(this.reqId);
       }
     },
+
     receive: function(event, data) {
       switch (event) {
         case 'audio':
-          this.object.scale.set(1, 1, 1);
-          const newScale = data.volume / Object.keys(data.frequency).length + 1;
-          this.object.scale.set(newScale, newScale, newScale);
+          const newScale = data.volume / Object.keys(data.frequency).length;
+          this.object.children.forEach(function(child, i) {
+            child.scale.x = child.scale.z = 1;
+            child.scale.x = child.scale.z = newScale * 2.5;
+          });
           break;
         case 'input':
           return this.handleInput(data);
         default:
       }
     },
+
     handleInput: function(data) {
       var input = data.source + '-' + data.name;
       var that = this;

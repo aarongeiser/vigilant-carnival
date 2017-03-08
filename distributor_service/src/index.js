@@ -44,7 +44,6 @@ dist.on('connection', function (d) {
     this.current_connections++;
 
     d.on('audio', data => {
-      console.log('I have audio');
       viz.emit('audio', data);
     });
 

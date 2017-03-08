@@ -31,11 +31,7 @@ window.onload = () => {
 
       window.requestAnimationFrame(distribute);
     });
-  });
-
-  socket.on('update_count', data => {
-    connectionCount.innerHTML = `${data.connectionCount} current connections`;
-  });
+  }); 
 
   socket.on('disconnect', data => {
     connected = false;

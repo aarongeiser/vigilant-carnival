@@ -3,7 +3,8 @@ window.getAudio = function(callback) {
     const audioContext = new (window.AudioContext || window.webkitAudioContext);
     const analyser = audioContext.createAnalyser();
     analyser.fftSize = 256;
-    analyser.smoothingTimeConstraint = 1.0;
+    // analyser.minDecibels = -90;
+    // analyser.maxDecibels = -10;
     source = audioContext.createMediaStreamSource(stream);
     source.connect(analyser);
     return callback({ analyser, source, permission: true });

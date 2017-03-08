@@ -71,12 +71,13 @@
       const renderPass = new THREE.RenderPass(this.scene, this.camera);
       const mirrorPass = new THREE.ShaderPass(THREE.MirrorShader);
 
-      mirrorPass.uniforms[ 'side' ].value = 0;
+      mirrorPass.uniforms[ 'side' ].value = 0.5;
 
       this.composer.addPass(renderPass);
       this.composer.addPass(mirrorPass);
       this.composer.addPass(copyPass);
       copyPass.renderToScreen = true;
+
     },
 
     play: function () {
@@ -87,12 +88,12 @@
         that.reqId = requestAnimationFrame(animate);
 
         $V.rotateObject(that.object, function() {
-          that.object.rotation.x += 0.01;
+          that.object.rotation.x += 0.005;
           // that.object.rotation.y -= 0.01;
           that.object.children.forEach(function(child, i) {
-            child.rotation.x += 0.01;
-            child.rotation.y -= 0.01;
-            child.rotation.z += 0.01;
+            child.rotation.x += 0.005;
+            child.rotation.y -= 0.005;
+            child.rotation.z += 0.005;
           });
         });
         that.composer.render(0.1);
@@ -172,10 +173,7 @@
         this.scene.remove(this.object);
         this.addBars();
       }
-
     }
-
-
   };
 
   $V.register(three001);

@@ -1,8 +1,6 @@
 (function($V) {
 
-  var scene, camera, renderer, object;
   var SLICE_WIDTH = 5;
-  var GAP = 1;
 
   var config = {
     repeatSize: 1//range 1 - 0;
@@ -30,7 +28,7 @@
         color: 0xffffff,
         map: this.texture
       });
-      var increment = GAP;
+      var increment = 1;
       var xpos = 0;
 
       this.object = new THREE.Object3D();
@@ -167,10 +165,6 @@
         }
         this.scene.remove(this.object);
         this.addBars();
-        // this.object.children.forEach(function(child) {
-        //   child.geometry.dispose();
-        //   child.geometry = geoms[currentGeometry].clone();
-        // });
       }
 
     }

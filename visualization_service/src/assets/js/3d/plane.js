@@ -1,137 +1,136 @@
 (function($V) {
 
-  var camera, scene, texture, plane, renderer;
-  var composer, W, H, defaultVertices, hemiLight, planeMaterial;
-
-  var config = {
-    variance: {
-      x: 0.8,
-      y: 0.8,
-      z: 8,
-    },
-    planeSize: 50,
-    planeDefinition: 8,
-    repeatSize: 20
-  };
-
-  function rand (min, max) {
-    if (max == null) {
-      max = min;
-      min = 0;
-    }
-    return min + (Math.random() * (max - min + 1));
-  }
-
   var three003 = {
+    initialized: false,
+    camera: null,
+    scene: null,
+    texture: null,
+    plane: null,
+    renderer: null,
+    W: null,
+    H: null,
+    light1: null,
+    light2: null,
+    defaultVertices: null,
+    planeMaterial: null,
+    config: {
+      variance: {
+        x: 0.8,
+        y: 0.8,
+        z: 8,
+      },
+      planeSize: 70,
+      planeDefinition: 10,
+      repeatSize: 20
+    },
+
+    rand: function(min, max) {
+      if (max == null) {
+        max = min;
+        min = 0;
+      }
+      return min + (Math.random() * (max - min + 1));
+    },
 
     createCamera: function() {
-      camera = new THREE.PerspectiveCamera(50, W / H, 0.1, 100);
-      camera.setLens(25);
-      camera.position.set(0, 0, 50);
+      this.camera = new THREE.PerspectiveCamera(50, this.W / this.H, 0.1, 100);
+      this.camera.position.set(0, 0, 50);
     },
 
     createLights: function() {
-      hemiLight = new THREE.HemisphereLight( 0x000000, 0xffffff, 0.8);
-      hemiLight.castshadow = true;
-      scene.add(hemiLight);
+      var ambientLight = new THREE.AmbientLight( 0x999999, 0.8);
+      ambientLight.castshadow = true;
+      this.scene.add(ambientLight);
 
       this.light1 = new THREE.PointLight($V.hslToRgb(.3), 10, 60, 2);
       this.light1.position.set(1, 20, 1);
-      scene.add(this.light1);
+      this.scene.add(this.light1);
 
       this.light2 = new THREE.PointLight($V.hslToRgb(.6), 10, 60  , 2);
       this.light2.position.set(1, -20, 1);
-      scene.add(this.light2);
+      this.scene.add(this.light2);
     },
 
     createPlane: function () {
-      var planeGeometry = new THREE.PlaneGeometry(config.planeSize, config.planeSize, config.planeDefinition, config.planeDefinition);
-      planeMaterial = new THREE.MeshLambertMaterial({
+      var that = this;
+      var planeGeometry = new THREE.PlaneGeometry(this.config.planeSize, this.config.planeSize, this.config.planeDefinition, this.config.planeDefinition);
+      this.planeMaterial = new THREE.MeshLambertMaterial({
         map: this.texture,
         side: THREE.DoubleSide
       });
-      this.texture.repeat.x = this.texture.repeat.y = config.repeatSize;
+      this.texture.repeat.x = this.texture.repeat.y = this.config.repeatSize;
       this.texture.needsUpdate = true;
 
-      plane = new THREE.Mesh(planeGeometry, planeMaterial);
-      defaultVertices = plane.geometry.clone().vertices;
+      this.plane = new THREE.Mesh(planeGeometry, this.planeMaterial);
+      this.defaultVertices = this.plane.geometry.clone().vertices;
 
-      defaultVertices.forEach(function(def) {
-        def.z = rand(-config.variance.z, config.variance.z);
+      this.defaultVertices.forEach(function(def) {
+        def.z = that.rand(-that.config.variance.z, that.config.variance.z);
       });
 
-      scene.add(plane);
+      this.scene.add(this.plane);
     },
 
     render: function () {
-      renderer.clear();
-      renderer.render(scene, camera);
-      renderer.clearDepth();
-      plane.geometry.verticesNeedUpdate = true;
-      plane.geometry.normalsNeedUpdate = true;
-      plane.geometry.computeFaceNormals();
+      this.renderer.clear();
+      this.renderer.render(this.scene, this.camera);
+      this.renderer.clearDepth();
+      this.plane.geometry.verticesNeedUpdate = true;
+      this.plane.geometry.normalsNeedUpdate = true;
+      this.plane.geometry.computeFaceNormals();
     },
 
     updatePlane: function () {
-      for (var i = 0; i < plane.geometry.vertices.length; i++) {
-        var vert = plane.geometry.vertices[i];
-        var defaultVert = defaultVertices[i];
-        vert.x = defaultVert.x + (rand(-config.variance.x, config.variance.x));
-        vert.y = defaultVert.y + (rand(-config.variance.y, config.variance.y));
-        vert.z = rand(-config.variance.z, config.variance.z);
-      }
-      plane.geometry.verticesNeedUpdate = true;
-      plane.geometry.computeFaceNormals();
+      var that = this;
+      this.plane.geometry.vertices.forEach(function(vert, i) {
+        var defaultVert = that.defaultVertices[i];
+        vert.x = defaultVert.x + (that.rand(-that.config.variance.x, that.config.variance.x));
+        vert.y = defaultVert.y + (that.rand(-that.config.variance.y, that.config.variance.x));
+        vert.z = that.rand(-that.config.variance.z, that.config.variance.z);
+      });
+
+      this.plane.geometry.verticesNeedUpdate = true;
+      this.plane.geometry.computeFaceNormals();
     },
 
     resize: function() {
-      W = window.innerWidth;
-      H = window.innerHeight;
-      renderer.setSize(W, H);
-      camera.aspect = W / H;
-      camera.updateProjectionMatrix();
+      this.W = window.innerWidth;
+      this.H = window.innerHeight;
+      this.renderer.setSize(this.W, this.H);
+      this.camera.aspect = this.W / this.H;
+      this.camera.updateProjectionMatrix();
     },
 
     init: function() {
-      renderer = new THREE.WebGLRenderer({
+      this.renderer = new THREE.WebGLRenderer({
         antialias: true,
         canvas: document.getElementById('audioCanvas')
       });
-      scene = new THREE.Scene();
-      W = window.innerWidth;
-      H = window.innerHeight;
+      this.scene = new THREE.Scene();
+      this.W = window.innerWidth;
+      this.H = window.innerHeight;
       this.texture = $V.getTexture();
       this.createCamera();
       this.createLights();
       this.createPlane();
       this.updatePlane();
       this.resize();
-
-      composer = new THREE.EffectComposer(renderer);
-      const copyPass = new THREE.ShaderPass(THREE.CopyShader);
-      const renderPass = new THREE.RenderPass(scene, camera);
-
-      composer.addPass(renderPass);
-      composer.addPass(copyPass);
-      copyPass.renderToScreen = true;
     },
 
     play: function () {
       this.init();
+
       var that = this;
 
       function animate () {
         that.reqId = requestAnimationFrame(animate);
 
-        $V.rotateObject(plane, function() {
-          plane.rotation.x -= 0.001;
-          plane.rotation.z -= 0.001;
+        $V.rotateObject(that.plane, function() {
+          that.plane.rotation.x += 0.001;
+          that.plane.rotation.z -= 0.001;
         });
 
-        hemiLight.position.z += 0.01;
-        hemiLight.position.x -= 0.01;
-
-        composer.render(0.1);
+        that.renderer.render(that.scene, that.camera);
       }
 
       this.reqId = requestAnimationFrame(animate);
@@ -144,12 +143,13 @@
     },
 
     receive: function(event, data) {
+      var that = this;
       switch (event) {
         case 'audio':
           const modifier = (data.volume / Object.keys(data.frequency).length);
-          plane.geometry.vertices.map(function(v, i) {
-            const val = defaultVertices[i].z * modifier;
-            v.z = val * 2;
+          this.plane.geometry.vertices.map(function(v, i) {
+            const val = that.defaultVertices[i].z * modifier;
+            v.z = val * 1.5;
             return v;
           });
           this.render();
@@ -170,23 +170,23 @@
         case 'texture-button1':
           if (data.value === 1) {
             this.texture = $V.getTexture();
-            this.texture.repeat.x = this.texture.repeat.y = config.repeatSize;
+            this.texture.repeat.x = this.texture.repeat.y = this.config.repeatSize;
             this.texture.needsUpdate;
-            plane.material.map = this.texture;
-            plane.material.map.needsUpdate = true;
-            plane.material.needsUpdate = true;
-            plane.needsUpdate = true;
+            this.plane.material.map = this.texture;
+            this.plane.material.map.needsUpdate = true;
+            this.plane.material.needsUpdate = true;
+            this.plane.needsUpdate = true;
           }
           break;
         case 'texture-pot1':
           var num = parseFloat(data.value, 10);
-          var perc = (config.repeatSize * num);
+          var perc = (this.config.repeatSize * num);
           if (perc < 1) {
             perc = 1;
           }
-          plane.material.map.repeat.x = perc;
-          plane.material.map.repeat.y = perc;
-          plane.needsUpdate = true;
+          this.plane.material.map.repeat.x = perc;
+          this.plane.material.map.repeat.y = perc;
+          this.plane.needsUpdate = true;
           break;
         case 'lighting-pot1':
           $V.setLightColor(this.light1, parseFloat(data.value, 10));
@@ -196,7 +196,7 @@
           break;
         case 'geometry-button1':
           if (data.value === 0) {
-            scene.remove(plane);
+            this.scene.remove(this.plane);
             this.createPlane();
             this.updatePlane();
             this.render();
