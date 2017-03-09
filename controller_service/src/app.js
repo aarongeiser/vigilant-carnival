@@ -75,8 +75,10 @@ function pollPot(adcChannel, inputName) {
                     'value': value
                   });
                   flashLed();
+                } else {
+                  ledOff();
                 }
-                ledOff();
+
             });
         }, 30);
     });
