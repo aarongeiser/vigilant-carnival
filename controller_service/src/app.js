@@ -57,7 +57,7 @@ function pollPot(adcChannel, inputName) {
         setInterval(function () {
             pot.read(function (err, reading) {
 
-                var value = reading.value.toFixed(2);
+                var value = parseFloat(reading.value.toFixed(2), 10);
                 var diff = buffer > value ? buffer - value : value - buffer;
 
                 console.log({ value, diff, value_diff, buffer});
