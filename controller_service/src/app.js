@@ -57,7 +57,7 @@ function pollJoystick(gpioPin, inputName) {
 
 // Poll Potentiometers
 function pollPot(adcChannel, inputName) {
-    const value_diff = 0.03;
+    const value_diff = 0.02;
     var buffer = 0.00;
     var pot = mcpadc.open(adcChannel, {speedHz: 1300000}, function (err) {
         setInterval(function () {
@@ -66,12 +66,12 @@ function pollPot(adcChannel, inputName) {
                 var value = parseFloat(reading.value.toFixed(2), 10);
                 var diff = buffer > value ? buffer - value : value - buffer;
 
-                if (value && (diff > value_diff) && (value != buffer)) {
-                  console.log('!!!!!!!!!!!!!Pot value: %d', value);
+                if (diff && (diff > value_diff) && (value != buffer)) {
+                  buffer = value;
                   socket.emit('input', {
-                      'name': inputName,
-                      'source': process.env.CONTROLLER_NAME,
-                      'value': value
+                    'name': inputName,
+                    'source': process.env.CONTROLLER_NAME,
+                    'value': value
                   });
                   flashLed();
                 }
