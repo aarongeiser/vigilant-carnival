@@ -60,6 +60,8 @@ function pollPot(adcChannel, inputName) {
                 var value = reading.value.toFixed(2);
                 var diff = buffer > value ? buffer - value : value - buffer;
 
+                console.log({ value, diff, value_diff, buffer});
+
                 if ((diff > value_diff) && (value != buffer)) {
                   buffer = value;
                   console.log('Pot value: %d', value);
