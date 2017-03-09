@@ -51,7 +51,7 @@ function pollJoystick(gpioPin, inputName) {
 
 // Poll Potentiometers
 function pollPot(adcChannel, inputName) {
-    const value_diff = 0.004;
+    const value_diff = 0.01;
     var buffer = 0.00;
     var pot = mcpadc.open(adcChannel, {speedHz: 1300000}, function (err) {
         setInterval(function () {
