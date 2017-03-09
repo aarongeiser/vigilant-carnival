@@ -51,7 +51,7 @@ function pollJoystick(gpioPin, inputName) {
 			'value': value
 		});
 		flashLed();
-    	setInterval(ledOff, 250);
+    	setInterval(ledOff, 750);
 	});
 }
 
