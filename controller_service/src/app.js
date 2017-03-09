@@ -51,7 +51,7 @@ function pollJoystick(gpioPin, inputName) {
 			'value': value
 		});
 		flashLed();
-    setInterval(ledOff, 250);
+    	setInterval(ledOff, 250);
 	});
 }
 
@@ -75,7 +75,7 @@ function pollPot(adcChannel, inputName) {
                     'value': value
                   });
                   flashLed();
-                  ledOff();
+                  setInterval(ledOff, 250);
                 }
             });
         }, 30);
