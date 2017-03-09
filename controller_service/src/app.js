@@ -1,6 +1,8 @@
 // MCP ADC Setup
 var mcpadc = require('mcp-spi-adc');
 
+
+
 // Web Sockets Setup
 var socket = require('socket.io-client')(process.env.SOCKET_ADDRESS);  /* http:// required */
 socket.on("event", function(data) { console.log(data); });
@@ -49,20 +51,24 @@ function pollJoystick(gpioPin, inputName) {
 
 // Poll Potentiometers
 function pollPot(adcChannel, inputName) {
+    const value_diff = 0.004;
     var buffer = 0.00;
     var pot = mcpadc.open(adcChannel, {speedHz: 1300000}, function (err) {
         setInterval(function () {
             pot.read(function (err, reading) {
+
                 var value = reading.value.toFixed(2);
-                if (value != buffer) {
-                    console.log('Pot value: %d', value);
-                    socket.emit('input', {
-                        'name': inputName,
-                        'source': process.env.CONTROLLER_NAME,
-                        'value': value
-                    });
-                    flashLed();
-                    buffer = value;
+                var diff = buffer > value ? buffer - value : value - buffer;
+
+                if ((diff > value_diff) && (value != buffer)) {
+                  buffer = value;
+                  console.log('Pot value: %d', value);
+                  socket.emit('input', {
+                      'name': inputName,
+                      'source': process.env.CONTROLLER_NAME,
+                      'value': value
+                  });
+                  flashLed();
                 }
             });
         }, 30);

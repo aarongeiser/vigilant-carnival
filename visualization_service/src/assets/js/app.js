@@ -4,7 +4,7 @@
   var position = 0;
   var currentVizualization = null;
   var currentTexture = 0;
-  var connectionUrl = 'http://localhost:3001/viz';
+  var connectionUrl = 'http://tx-viz-dist:3001/viz';
 
   var textures = [
     '/assets/textures/patterns-01.png',
