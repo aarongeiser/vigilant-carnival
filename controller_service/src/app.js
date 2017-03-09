@@ -67,6 +67,7 @@ function pollPot(adcChannel, inputName) {
                 var diff = buffer > value ? buffer - value : value - buffer;
 
                 if (diff && (diff > value_diff) && (value != buffer)) {
+                  console.log({ value });
                   buffer = value;
                   socket.emit('input', {
                     'name': inputName,
