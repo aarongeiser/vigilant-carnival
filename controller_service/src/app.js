@@ -15,6 +15,7 @@ rpio.open(3, rpio.OUTPUT, rpio.LOW);
 // Flash LED
 function flashLed() {
     rpio.write(3, rpio.HIGH);
+	setInterval(ledOff, 250);
 }
 
 function ledOff() {
@@ -34,7 +35,6 @@ function pollPin(gpioPin, inputName) {
             'value': value
         });
         flashLed();
-        setInterval(ledOff, 250);
     });
 }
 
@@ -51,7 +51,6 @@ function pollJoystick(gpioPin, inputName) {
 			'value': value
 		});
 		flashLed();
-    	setInterval(ledOff, 750);
 	});
 }
 
@@ -75,7 +74,6 @@ function pollPot(adcChannel, inputName) {
                     'value': value
                   });
                   flashLed();
-                  setInterval(ledOff, 250);
                 }
             });
         }, 30);
