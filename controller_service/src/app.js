@@ -17,6 +17,10 @@ function flashLed() {
     rpio.write(3, rpio.HIGH);
 }
 
+function ledOff() {
+  rpio.write(3, rpio.LOW);
+}
+
 // Poll GPIO Pins
 function pollPin(gpioPin, inputName) {
     rpio.open(gpioPin, rpio.INPUT, rpio.PULL_DOWN);
@@ -30,6 +34,7 @@ function pollPin(gpioPin, inputName) {
             'value': value
         });
         flashLed();
+        setInterval(ledOff, 250);
     });
 }
 
@@ -46,12 +51,13 @@ function pollJoystick(gpioPin, inputName) {
 			'value': value
 		});
 		flashLed();
+    setInterval(ledOff, 250);
 	});
 }
 
 // Poll Potentiometers
 function pollPot(adcChannel, inputName) {
-    const value_diff = 0.01;
+    const value_diff = 0.02;
     var buffer = 0.00;
     var pot = mcpadc.open(adcChannel, {speedHz: 1300000}, function (err) {
         setInterval(function () {
@@ -60,11 +66,8 @@ function pollPot(adcChannel, inputName) {
                 var value = parseFloat(reading.value.toFixed(2), 10);
                 var diff = buffer > value ? buffer - value : value - buffer;
 
-                console.log({ value, diff, value_diff, buffer});
-
                 if ((diff > value_diff) && (value != buffer)) {
-                  buffer = value;
-                  console.log('Pot value: %d', value);
+                  console.log('!!!!!!!!!!!!!Pot value: %d', value);
                   socket.emit('input', {
                       'name': inputName,
                       'source': process.env.CONTROLLER_NAME,
@@ -72,6 +75,7 @@ function pollPot(adcChannel, inputName) {
                   });
                   flashLed();
                 }
+                ledOff();
             });
         }, 30);
     });
