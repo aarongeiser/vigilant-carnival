@@ -23,7 +23,7 @@ function ledOff() {
 
 // Poll GPIO Pins
 function pollPin(gpioPin, inputName) {
-    rpio.open(gpioPin, rpio.INPUT, rpio.PULL_DOWN);
+    rpio.open(gpioPin, rpio.INPUT, rpio.PULL_UP);
     rpio.poll(gpioPin, function (pin) {
         var value = rpio.read(pin);
         var state = value ? 'released' : 'pressed';
