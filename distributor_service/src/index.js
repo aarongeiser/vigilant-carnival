@@ -5,7 +5,7 @@ const serveStatic = require('serve-static');
 
 const PORT = 3001;
 const VISUALIZERS = 'visualizers';
-const VISUALIZATION_DURATION = 60000;
+const VISUALIZATION_DURATION = 180000;
 
 const server = http.createServer(app);
 

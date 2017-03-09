@@ -58,7 +58,7 @@
       this.texture = $V.getTexture();
       this.addBars();
 
-      this.scene.add(new THREE.AmbientLight(0x999999));
+      this.scene.add(new THREE.AmbientLight(0xffffff));
 
       this.light1 = new THREE.DirectionalLight($V.hslToRgb(.3));
       this.light1.position.set(20, 1, 1);

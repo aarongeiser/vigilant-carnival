@@ -38,7 +38,7 @@
     },
 
     createLights: function() {
-      var ambientLight = new THREE.AmbientLight( 0x999999, 0.8);
+      var ambientLight = new THREE.AmbientLight( 0xffffff, 0.8);
       ambientLight.castshadow = true;
       this.scene.add(ambientLight);
 
