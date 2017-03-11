@@ -7,3 +7,4 @@ DOCKER_PORTS = -p 3002:3002
 DOCKER_MAPPED_VOLUMES = -v $(shell pwd)/src:/src
 DOCKER_ENV = \
 	-e NODE_ENV=development \
+	-e VIZ_CONNECTION_URL=http://127.0.0.1/viz \
