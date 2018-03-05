@@ -1,4 +1,0 @@
-web:
-  image: sinocalliopteryx/distributor-service
-  ports:
-    - "3001:3001"
