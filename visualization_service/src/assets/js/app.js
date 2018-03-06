@@ -165,17 +165,17 @@
 
     init: function() {
       this.connect()
-      var that = this
-      window.addEventListener(
-        'keyup',
-        function(e) {
-          if (e.keyCode === 32) {
-            //space-bar
-            that.advance()
-          }
-        },
-        false
-      )
+      // var that = this
+      // window.addEventListener(
+      //   'keyup',
+      //   function(e) {
+      //     if (e.keyCode === 32) {
+      //       //space-bar
+      //       that.advance()
+      //     }
+      //   },
+      //   false
+      // )
       return this
     }
   }

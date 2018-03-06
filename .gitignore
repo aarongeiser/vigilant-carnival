@@ -42,3 +42,5 @@ jspm_packages
 .env
 
 *.tags*
+
+visualization_service/src/assets/video

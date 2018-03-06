@@ -15,9 +15,9 @@
   var badTVParams = {
     mute: true,
     show: true,
-    distortion: 1.0,
+    distortion: 2.0,
     distortion2: 1.0,
-    speed: 0.15,
+    speed: 0.05,
     rollSpeed: 0.0
   }
 
@@ -30,7 +30,7 @@
   var rgbParams = {
     show: true,
     amount: 1, // 1 > -1
-    angle: 0.2
+    angle: 0.05
   }
 
   var filmParams = {
@@ -40,25 +40,53 @@
     nIntensity: 0.4
   }
 
+  var videoCollection = [
+    'assets/video/cheetah.mp4',
+    'assets/video/landscape.mp4'
+  ]
+
+  var selectedVideoIndex = -1
+
   var glitchyTV = {
     play: function() {
       console.log('playing glitch')
       init()
       animate()
+
+      var that = this
+      window.addEventListener(
+        'keyup',
+        function(e) {
+          if (e.keyCode === 32) {
+            //space-bar
+            init()
+          }
+        },
+        false
+      )
+      window.addEventListener('resize', onResize, false)
     },
     destroy: function() {},
     receive: function(message, data) {
       const top = 1
-      const bottom = 0.0
+      const bottom = 0.5
       const distance = bottom - top
       const position = bottom + data.volume / 100 * distance
 
-      console.log(Math.abs(position), data)
+      // console.log(Math.abs(position), data)
 
       rgbParams.amount = Math.abs(position)
-      staticParams.amount = Math.abs(position)
+      // staticParams.amount = Math.abs(position)
       onParamsChange()
     }
+  }
+
+  function getSelectedVideoIndex() {
+    selectedVideoIndex++
+    if (selectedVideoIndex > videoCollection.length - 1) {
+      selectedVideoIndex = 0
+    }
+    return selectedVideoIndex
   }
 
   function init() {
@@ -69,7 +97,7 @@
     //Load Video
     video = document.createElement('video')
     video.loop = true
-    video.src = 'assets/video/cheetah.mp4'
+    video.src = videoCollection[getSelectedVideoIndex()]
     video.play()
 
     //Use webcam
@@ -114,6 +142,9 @@
     // container.appendChild(stats.domElement)
 
     //init renderer
+    if (renderer) {
+      document.body.removeChild(renderer.domElement)
+    }
     renderer = new THREE.WebGLRenderer()
     renderer.setSize(800, 600)
     document.body.appendChild(renderer.domElement)
@@ -130,16 +161,10 @@
     //set shader uniforms
     filmPass.uniforms['grayscale'].value = 0
 
-    //Init DAT GUI control panel
-
     onToggleShaders()
     onToggleMute()
     onParamsChange()
-
-    window.addEventListener('resize', onResize, false)
-    renderer.domElement.addEventListener('click', randomizeParams, false)
     onResize()
-    // randomizeParams()
   }
 
   function onParamsChange() {
